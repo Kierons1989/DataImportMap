@@ -632,7 +632,7 @@ export default function DataImportMap() {
   return (
     <div className="min-h-screen bg-gray-100 flex">
       {/* Navigation Sidebar */}
-      <div className="w-[100px] bg-[#00336E] flex flex-col items-center py-6">
+      <div className="w-[100px] bg-[#00336E] flex flex-col items-center py-6 sticky top-0 h-svh overflow-hidden shrink-0">
         {/* Logo */}
         <div className="w-[76px] h-[38px] mb-8">
           <svg
@@ -707,8 +707,8 @@ export default function DataImportMap() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
-        {/* Top Menu */}
-        <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+              {/* Top Menu */}
+      <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-0 z-30">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm">
             <span className="text-blue-600 font-medium">Home</span>
@@ -894,7 +894,7 @@ export default function DataImportMap() {
                   <div className="flex items-center gap-2">
                     <Checkbox
                       checked={hasHeader}
-                      onCheckedChange={setHasHeader}
+                      onCheckedChange={(checked) => setHasHeader(!!checked)}
                       className="w-5 h-5"
                     />
                   </div>
