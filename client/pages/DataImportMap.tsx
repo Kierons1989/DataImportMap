@@ -606,119 +606,97 @@ export default function DataImportMap() {
         <div className="flex-1 p-6 overflow-y-auto">
           <div className="max-w-[988px] mx-auto">
             <div className="rounded bg-white p-10">
-              {/* Details Section */}
-              <Card className="mb-10">
-                <div className="relative">
-                  <div className="absolute -top-3 left-4 flex items-center gap-2 bg-white px-2">
-                    <div className="text-blue-600">
-                      <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
-                        <rect
-                          width="14"
-                          height="5"
-                          rx="1"
-                          fill="currentColor"
-                          transform="rotate(45 0 0)"
-                        />
-                        <rect
-                          width="14"
-                          height="5"
-                          rx="1"
-                          fill="currentColor"
-                          transform="rotate(135 6 0)"
-                        />
-                      </svg>
+
+              {/* Details */}
+              <div className="mb-6">
+                <h3 className="mb-6 text-xl font-bold text-gray-700">Details</h3>
+
+                {/* Type of Import */}
+                <div className="mb-6 flex items-start gap-10">
+                  <div className="w-[336px]">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-gray-700">Type of Import</span>
+                      <span className="text-xl font-medium text-red-600">*</span>
                     </div>
-                    <span className="text-lg font-medium text-gray-800">Details</span>
                   </div>
-                  <CardContent className="space-y-6 pt-8">
-                    {/* Type of Import */}
-                    <div className="flex items-start gap-10">
-                      <div className="w-[336px]">
-                        <div className="mb-3 flex items-center gap-2">
-                          <span className="font-bold text-gray-700">Type of Import</span>
-                          <span className="text-xl font-bold text-red-600">*</span>
-                        </div>
+                  <div className="space-y-3">
+                    <label className="flex cursor-pointer items-center gap-2">
+                      <div
+                        className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 border-blue-600"
+                        onClick={() => setImportType('module')}
+                      >
+                        {importType === 'module' && (
+                          <div className="h-4 w-4 rounded-full bg-blue-600" />
+                        )}
                       </div>
-                      <div className="space-y-3">
-                        <label className="flex cursor-pointer items-center gap-2">
-                          <div
-                            className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 border-blue-600"
-                            onClick={() => setImportType('module')}
-                          >
-                            {importType === 'module' && (
-                              <div className="h-4 w-4 rounded-full bg-blue-600" />
-                            )}
-                          </div>
-                          <span className="text-gray-700">Module</span>
-                        </label>
-                        <label className="flex cursor-pointer items-center gap-2">
-                          <div
-                            className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 border-blue-600"
-                            onClick={() => setImportType('user')}
-                          >
-                            {importType === 'user' && (
-                              <div className="h-4 w-4 rounded-full bg-blue-600" />
-                            )}
-                          </div>
-                          <span className="text-gray-700">User</span>
-                        </label>
+                      <span className="text-gray-700">Module</span>
+                    </label>
+                    <label className="flex cursor-pointer items-center gap-2">
+                      <div
+                        className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 border-blue-600"
+                        onClick={() => setImportType('user')}
+                      >
+                        {importType === 'user' && (
+                          <div className="h-4 w-4 rounded-full bg-blue-600" />
+                        )}
                       </div>
-                    </div>
-
-                    {/* Module */}
-                    <div className="flex items-start gap-10">
-                      <div className="w-[336px]">
-                        <span className="font-bold text-gray-700">Module</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className="flex h-9 w-[280px] items-center rounded border border-gray-300 bg-gray-100 px-2">
-                          <span className="text-gray-700">Person Register</span>
-                        </div>
-                        <Button className="border-3 h-9 border-blue-600 bg-transparent px-3 text-blue-600">
-                          <Settings className="h-5 w-5" />
-                          <ChevronDown className="h-5 w-5" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Title */}
-                    <div className="flex items-start gap-10">
-                      <div className="w-[336px]">
-                        <div className="flex items-center gap-2">
-                          <span className="font-bold text-gray-700">Title</span>
-                          <span className="text-xl font-bold text-red-600">*</span>
-                        </div>
-                      </div>
-                      <Input
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className="h-9 w-[280px]"
-                      />
-                    </div>
-
-                    {/* Description */}
-                    <div className="flex items-start gap-10">
-                      <div className="w-[336px]">
-                        <span className="font-bold text-gray-700">Description</span>
-                      </div>
-                      <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="h-[120px] w-[303px] resize-none rounded border border-gray-300 p-2"
-                      />
-                    </div>
-                  </CardContent>
+                      <span className="text-gray-700">User</span>
+                    </label>
+                  </div>
                 </div>
-              </Card>
+
+                {/* Module */}
+                <div className="mb-6 flex items-start gap-10">
+                  <div className="w-[336px]">
+                    <span className="font-medium text-gray-700">Module</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="flex h-9 w-[280px] items-center rounded border border-gray-300 bg-gray-100 px-2">
+                      <span className="text-gray-700">Person Register</span>
+                    </div>
+                    <Button className="border-3 h-9 border-blue-600 bg-transparent px-3 text-blue-600">
+                      <Settings className="h-5 w-5" />
+                      <ChevronDown className="h-5 w-5" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Title */}
+                <div className="mb-6 flex items-start gap-10">
+                  <div className="w-[336px]">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-gray-700">Title</span>
+                      <span className="text-xl font-medium text-red-600">*</span>
+                    </div>
+                  </div>
+                  <Input
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="h-9 w-[280px]"
+                  />
+                </div>
+
+                {/* Description */}
+                <div className="mb-6 flex items-start gap-10">
+                  <div className="w-[336px]">
+                    <span className="font-medium text-gray-700">Description</span>
+                  </div>
+                  <textarea
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="h-[120px] w-[303px] resize-none rounded border border-gray-300 p-2"
+                  />
+                </div>
+              </div>
 
               {/* File Format Details */}
               <div className="mb-6">
-                <h3 className="mb-6 text-lg font-bold text-gray-700">File Format Details</h3>
+                <h3 className="mb-6 text-xl font-bold text-gray-700">File Format Details</h3>
 
                 {/* Has Header */}
                 <div className="mb-6 flex items-start gap-10">
                   <div className="w-[336px]">
-                    <span className="font-bold text-gray-700">Has Header</span>
+                    <span className="font-medium text-gray-700">Has Header</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Checkbox
@@ -733,8 +711,8 @@ export default function DataImportMap() {
                 <div className="mb-6 flex items-start gap-10">
                   <div className="w-[336px]">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-gray-700">Delimiter</span>
-                      <span className="text-xl font-bold text-red-600">*</span>
+                      <span className="font-medium text-gray-700">Delimiter</span>
+                      <span className="text-xl font-medium text-red-600">*</span>
                     </div>
                   </div>
                   <div className="space-y-3">
@@ -767,8 +745,8 @@ export default function DataImportMap() {
                 <div className="mb-6 flex items-start gap-10">
                   <div className="w-[336px]">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-gray-700">Import Type</span>
-                      <span className="text-xl font-bold text-red-600">*</span>
+                      <span className="font-medium text-gray-700">Import Type</span>
+                      <span className="text-xl font-medium text-red-600">*</span>
                     </div>
                   </div>
                   <div className="space-y-3">
@@ -811,7 +789,7 @@ export default function DataImportMap() {
                 {/* Date Format */}
                 <div className="mb-6 flex items-start gap-10">
                   <div className="w-[336px]">
-                    <span className="font-bold text-gray-700">Date Format</span>
+                    <span className="font-medium text-gray-700">Date Format</span>
                   </div>
                   <Select value={dateFormat} onValueChange={setDateFormat}>
                     <SelectTrigger className="h-9 w-[280px]">
@@ -948,7 +926,7 @@ export default function DataImportMap() {
 
               {/* Data Mapping Assistant */}
               <div className="mb-6">
-                <h3 className="mb-6 text-lg font-bold text-gray-700">Data Mapping Assistant</h3>
+                <h3 className="mb-6 text-xl font-bold text-gray-700">Data Mapping Assistant</h3>
 
                 {!isFileUploaded ? (
                   <div className="flex flex-col items-center gap-6 py-12">
@@ -983,7 +961,7 @@ export default function DataImportMap() {
                     </div>
 
                     <div className="space-y-3 text-center">
-                      <h4 className="font-bold text-gray-800">Upload Your CSV Data</h4>
+                      <h4 className="font-medium text-gray-800">Upload Your CSV Data</h4>
                       <p className="max-w-[296px] text-sm text-gray-600">
                         Upload your CSV file and I'll help map the columns to your configured
                         captions above. The AI assistant will suggest the best matches.
