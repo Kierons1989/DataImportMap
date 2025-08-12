@@ -51,7 +51,9 @@ export default function Index() {
         <p className="mt-4 max-w-md text-slate-600">
           Watch the chat on the left for updates that might need your attention to finish generating
         </p>
-        <p className="mt-4 hidden max-w-md">{exampleFromServer}</p>
+        <p className="mt-4 max-w-md text-slate-700">
+          {exampleFromServer || 'Loading hello from the server...'}
+        </p>
       </div>
     </div>
   );
