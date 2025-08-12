@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 
 interface Message {
   id: string;
-  type: 'user' | 'assistant';
+  type: "user" | "assistant";
   content: string;
   timestamp: Date;
   mappingSuggestion?: {
@@ -26,12 +26,12 @@ interface AIChatProps {
   onMappingRemove: (csvColumn: string) => void;
 }
 
-export function AIChat({ 
-  csvColumns, 
-  captions, 
-  currentMappings, 
-  onMappingUpdate, 
-  onMappingRemove 
+export function AIChat({
+  csvColumns,
+  captions,
+  currentMappings,
+  onMappingUpdate,
+  onMappingRemove,
 }: AIChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -41,92 +41,125 @@ export function AIChat({
   // Generate mock AI responses based on user input and context
   const generateAIResponse = (userMessage: string): Promise<Message> => {
     return new Promise((resolve) => {
-      setTimeout(() => {
-        const lowerMessage = userMessage.toLowerCase();
-        let response = "";
-        let mappingSuggestion = undefined;
+      setTimeout(
+        () => {
+          const lowerMessage = userMessage.toLowerCase();
+          let response = "";
+          let mappingSuggestion = undefined;
 
-        // Analyze user intent and provide appropriate responses
-        if (lowerMessage.includes("map") || lowerMessage.includes("connect") || lowerMessage.includes("match")) {
-          const unmappedColumns = csvColumns.filter(col => !currentMappings[col]);
-          const availableCaptions = captions.filter(cap => !Object.values(currentMappings).includes(cap));
-          
-          if (unmappedColumns.length > 0 && availableCaptions.length > 0) {
-            const suggestedColumn = unmappedColumns[0];
-            const suggestedCaption = availableCaptions.find(cap => 
-              cap.toLowerCase().includes(suggestedColumn.toLowerCase()) ||
-              suggestedColumn.toLowerCase().includes(cap.toLowerCase())
-            ) || availableCaptions[0];
-            
-            response = `I suggest mapping "${suggestedColumn}" to "${suggestedCaption}". They seem semantically similar. Would you like me to apply this mapping?`;
-            mappingSuggestion = {
-              csvColumn: suggestedColumn,
-              targetCaption: suggestedCaption,
-              confidence: 0.85
-            };
-          } else if (unmappedColumns.length === 0) {
-            response = "All CSV columns have been mapped! Is there anything you'd like to adjust?";
-          } else {
-            response = "All your captions have been used. You may need to add more captions or review existing mappings.";
-          }
-        } else if (lowerMessage.includes("help") || lowerMessage.includes("how")) {
-          response = "I can help you map your CSV columns to your desired table captions. I'll analyze the column names and suggest the best matches. You can ask me to 'map columns', 'suggest mappings', or tell me about specific columns you'd like to map.";
-        } else if (lowerMessage.includes("remove") || lowerMessage.includes("delete") || lowerMessage.includes("unmap")) {
-          const mappedColumns = Object.keys(currentMappings);
-          if (mappedColumns.length > 0) {
-            response = `I can help you remove mappings. Currently mapped columns: ${mappedColumns.join(", ")}. Which one would you like to unmap?`;
-          } else {
-            response = "There are no mappings to remove at the moment.";
-          }
-        } else if (lowerMessage.includes("status") || lowerMessage.includes("progress")) {
-          const mappedCount = Object.keys(currentMappings).length;
-          const totalColumns = csvColumns.length;
-          response = `Progress: ${mappedCount}/${totalColumns} columns mapped. ${totalColumns - mappedCount} columns still need mapping.`;
-        } else {
-          // Try to find column names in the message
-          const mentionedColumn = csvColumns.find(col => 
-            lowerMessage.includes(col.toLowerCase())
-          );
-          const mentionedCaption = captions.find(cap => 
-            lowerMessage.includes(cap.toLowerCase())
-          );
+          // Analyze user intent and provide appropriate responses
+          if (
+            lowerMessage.includes("map") ||
+            lowerMessage.includes("connect") ||
+            lowerMessage.includes("match")
+          ) {
+            const unmappedColumns = csvColumns.filter(
+              (col) => !currentMappings[col],
+            );
+            const availableCaptions = captions.filter(
+              (cap) => !Object.values(currentMappings).includes(cap),
+            );
 
-          if (mentionedColumn && mentionedCaption) {
-            response = `I understand you want to map "${mentionedColumn}" to "${mentionedCaption}". That's a good match! Should I apply this mapping?`;
-            mappingSuggestion = {
-              csvColumn: mentionedColumn,
-              targetCaption: mentionedCaption,
-              confidence: 0.95
-            };
-          } else if (mentionedColumn) {
-            const availableCaptions = captions.filter(cap => !Object.values(currentMappings).includes(cap));
-            if (availableCaptions.length > 0) {
-              const bestMatch = availableCaptions.find(cap => 
-                cap.toLowerCase().includes(mentionedColumn.toLowerCase()) ||
-                mentionedColumn.toLowerCase().includes(cap.toLowerCase())
-              ) || availableCaptions[0];
-              response = `For the "${mentionedColumn}" column, I suggest mapping it to "${bestMatch}". Does this make sense?`;
+            if (unmappedColumns.length > 0 && availableCaptions.length > 0) {
+              const suggestedColumn = unmappedColumns[0];
+              const suggestedCaption =
+                availableCaptions.find(
+                  (cap) =>
+                    cap.toLowerCase().includes(suggestedColumn.toLowerCase()) ||
+                    suggestedColumn.toLowerCase().includes(cap.toLowerCase()),
+                ) || availableCaptions[0];
+
+              response = `I suggest mapping "${suggestedColumn}" to "${suggestedCaption}". They seem semantically similar. Would you like me to apply this mapping?`;
+              mappingSuggestion = {
+                csvColumn: suggestedColumn,
+                targetCaption: suggestedCaption,
+                confidence: 0.85,
+              };
+            } else if (unmappedColumns.length === 0) {
+              response =
+                "All CSV columns have been mapped! Is there anything you'd like to adjust?";
+            } else {
+              response =
+                "All your captions have been used. You may need to add more captions or review existing mappings.";
+            }
+          } else if (
+            lowerMessage.includes("help") ||
+            lowerMessage.includes("how")
+          ) {
+            response =
+              "I can help you map your CSV columns to your desired table captions. I'll analyze the column names and suggest the best matches. You can ask me to 'map columns', 'suggest mappings', or tell me about specific columns you'd like to map.";
+          } else if (
+            lowerMessage.includes("remove") ||
+            lowerMessage.includes("delete") ||
+            lowerMessage.includes("unmap")
+          ) {
+            const mappedColumns = Object.keys(currentMappings);
+            if (mappedColumns.length > 0) {
+              response = `I can help you remove mappings. Currently mapped columns: ${mappedColumns.join(", ")}. Which one would you like to unmap?`;
+            } else {
+              response = "There are no mappings to remove at the moment.";
+            }
+          } else if (
+            lowerMessage.includes("status") ||
+            lowerMessage.includes("progress")
+          ) {
+            const mappedCount = Object.keys(currentMappings).length;
+            const totalColumns = csvColumns.length;
+            response = `Progress: ${mappedCount}/${totalColumns} columns mapped. ${totalColumns - mappedCount} columns still need mapping.`;
+          } else {
+            // Try to find column names in the message
+            const mentionedColumn = csvColumns.find((col) =>
+              lowerMessage.includes(col.toLowerCase()),
+            );
+            const mentionedCaption = captions.find((cap) =>
+              lowerMessage.includes(cap.toLowerCase()),
+            );
+
+            if (mentionedColumn && mentionedCaption) {
+              response = `I understand you want to map "${mentionedColumn}" to "${mentionedCaption}". That's a good match! Should I apply this mapping?`;
               mappingSuggestion = {
                 csvColumn: mentionedColumn,
-                targetCaption: bestMatch,
-                confidence: 0.75
+                targetCaption: mentionedCaption,
+                confidence: 0.95,
               };
+            } else if (mentionedColumn) {
+              const availableCaptions = captions.filter(
+                (cap) => !Object.values(currentMappings).includes(cap),
+              );
+              if (availableCaptions.length > 0) {
+                const bestMatch =
+                  availableCaptions.find(
+                    (cap) =>
+                      cap
+                        .toLowerCase()
+                        .includes(mentionedColumn.toLowerCase()) ||
+                      mentionedColumn.toLowerCase().includes(cap.toLowerCase()),
+                  ) || availableCaptions[0];
+                response = `For the "${mentionedColumn}" column, I suggest mapping it to "${bestMatch}". Does this make sense?`;
+                mappingSuggestion = {
+                  csvColumn: mentionedColumn,
+                  targetCaption: bestMatch,
+                  confidence: 0.75,
+                };
+              } else {
+                response = `I found the "${mentionedColumn}" column, but all captions are already mapped. You might need to add more captions.`;
+              }
             } else {
-              response = `I found the "${mentionedColumn}" column, but all captions are already mapped. You might need to add more captions.`;
+              response =
+                "I'm here to help map your CSV columns to table captions. You can ask me to suggest mappings, or tell me about specific columns you'd like to map!";
             }
-          } else {
-            response = "I'm here to help map your CSV columns to table captions. You can ask me to suggest mappings, or tell me about specific columns you'd like to map!";
           }
-        }
 
-        resolve({
-          id: Date.now().toString(),
-          type: 'assistant',
-          content: response,
-          timestamp: new Date(),
-          mappingSuggestion
-        });
-      }, 1000 + Math.random() * 1500); // Simulate thinking time
+          resolve({
+            id: Date.now().toString(),
+            type: "assistant",
+            content: response,
+            timestamp: new Date(),
+            mappingSuggestion,
+          });
+        },
+        1000 + Math.random() * 1500,
+      ); // Simulate thinking time
     });
   };
 
@@ -135,18 +168,18 @@ export function AIChat({
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      type: 'user',
+      type: "user",
       content: inputValue,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
-    setMessages(prev => [...prev, userMessage]);
+    setMessages((prev) => [...prev, userMessage]);
     setInputValue("");
     setIsTyping(true);
 
     try {
       const aiResponse = await generateAIResponse(inputValue);
-      setMessages(prev => [...prev, aiResponse]);
+      setMessages((prev) => [...prev, aiResponse]);
     } catch (error) {
       console.error("Error generating AI response:", error);
     } finally {
@@ -155,7 +188,7 @@ export function AIChat({
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -165,11 +198,11 @@ export function AIChat({
     onMappingUpdate(csvColumn, caption);
     const confirmMessage: Message = {
       id: Date.now().toString(),
-      type: 'assistant',
+      type: "assistant",
       content: `Perfect! I've mapped "${csvColumn}" to "${caption}".`,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
-    setMessages(prev => [...prev, confirmMessage]);
+    setMessages((prev) => [...prev, confirmMessage]);
   };
 
   // Initial welcome message
@@ -177,9 +210,9 @@ export function AIChat({
     if (messages.length === 0 && csvColumns.length > 0) {
       const welcomeMessage: Message = {
         id: "welcome",
-        type: 'assistant',
+        type: "assistant",
         content: `Hello! I can see you have ${csvColumns.length} columns in your CSV: ${csvColumns.join(", ")}. I'm ready to help you map these to your ${captions.length} captions. What would you like me to help you with?`,
-        timestamp: new Date()
+        timestamp: new Date(),
       };
       setMessages([welcomeMessage]);
     }
@@ -188,7 +221,9 @@ export function AIChat({
   // Auto-scroll to bottom
   useEffect(() => {
     if (scrollAreaRef.current) {
-      const scrollElement = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      const scrollElement = scrollAreaRef.current.querySelector(
+        "[data-radix-scroll-area-viewport]",
+      );
       if (scrollElement) {
         scrollElement.scrollTop = scrollElement.scrollHeight;
       }
@@ -210,41 +245,52 @@ export function AIChat({
               <div
                 key={message.id}
                 className={`flex items-start space-x-2 ${
-                  message.type === 'user' ? 'justify-end' : 'justify-start'
+                  message.type === "user" ? "justify-end" : "justify-start"
                 }`}
               >
-                {message.type === 'assistant' && (
+                {message.type === "assistant" && (
                   <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
                     <Bot className="h-4 w-4 text-white" />
                   </div>
                 )}
                 <div
                   className={`max-w-[80%] rounded-lg p-3 ${
-                    message.type === 'user'
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-gray-100 text-gray-900'
+                    message.type === "user"
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-100 text-gray-900"
                   }`}
                 >
                   <p className="text-sm">{message.content}</p>
                   {message.mappingSuggestion && (
                     <div className="mt-3 p-2 bg-white rounded border space-y-2">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium text-gray-600">Suggested Mapping:</span>
+                        <span className="text-xs font-medium text-gray-600">
+                          Suggested Mapping:
+                        </span>
                         <Badge variant="secondary" className="text-xs">
-                          {Math.round(message.mappingSuggestion.confidence * 100)}% match
+                          {Math.round(
+                            message.mappingSuggestion.confidence * 100,
+                          )}
+                          % match
                         </Badge>
                       </div>
                       <div className="text-sm">
-                        <span className="font-medium">{message.mappingSuggestion.csvColumn}</span>
+                        <span className="font-medium">
+                          {message.mappingSuggestion.csvColumn}
+                        </span>
                         <span className="mx-2">→</span>
-                        <span className="font-medium">{message.mappingSuggestion.targetCaption}</span>
+                        <span className="font-medium">
+                          {message.mappingSuggestion.targetCaption}
+                        </span>
                       </div>
                       <Button
                         size="sm"
-                        onClick={() => applyMapping(
-                          message.mappingSuggestion!.csvColumn,
-                          message.mappingSuggestion!.targetCaption
-                        )}
+                        onClick={() =>
+                          applyMapping(
+                            message.mappingSuggestion!.csvColumn,
+                            message.mappingSuggestion!.targetCaption,
+                          )
+                        }
                         className="w-full"
                       >
                         Apply Mapping
@@ -252,7 +298,7 @@ export function AIChat({
                     </div>
                   )}
                 </div>
-                {message.type === 'user' && (
+                {message.type === "user" && (
                   <div className="flex-shrink-0 w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
                     <User className="h-4 w-4 text-white" />
                   </div>
@@ -267,8 +313,14 @@ export function AIChat({
                 <div className="bg-gray-100 rounded-lg p-3">
                   <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.1s" }}
+                    ></div>
+                    <div
+                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      style={{ animationDelay: "0.2s" }}
+                    ></div>
                   </div>
                 </div>
               </div>
@@ -284,7 +336,10 @@ export function AIChat({
               onKeyPress={handleKeyPress}
               className="flex-1"
             />
-            <Button onClick={sendMessage} disabled={!inputValue.trim() || isTyping}>
+            <Button
+              onClick={sendMessage}
+              disabled={!inputValue.trim() || isTyping}
+            >
               <Send className="h-4 w-4" />
             </Button>
           </div>

@@ -2,7 +2,13 @@ import { ArrowRight, X, CheckCircle, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface MappingDisplayProps {
   csvColumns: string[];
@@ -19,30 +25,35 @@ export function MappingDisplay({
   mappings,
   csvData,
   onMappingUpdate,
-  onMappingRemove
+  onMappingRemove,
 }: MappingDisplayProps) {
   const mappedColumns = Object.keys(mappings);
-  const unmappedColumns = csvColumns.filter(col => !mappings[col]);
+  const unmappedColumns = csvColumns.filter((col) => !mappings[col]);
   const usedCaptions = Object.values(mappings);
-  const availableCaptions = captions.filter(cap => !usedCaptions.includes(cap));
+  const availableCaptions = captions.filter(
+    (cap) => !usedCaptions.includes(cap),
+  );
 
   const getColumnPreview = (column: string, maxItems = 3) => {
     const columnIndex = csvColumns.indexOf(column);
     if (columnIndex === -1 || csvData.length < 2) return [];
-    
+
     return csvData
       .slice(1, maxItems + 1)
-      .map(row => row[columnIndex])
-      .filter(value => value && value.trim() !== '');
+      .map((row) => row[columnIndex])
+      .filter((value) => value && value.trim() !== "");
   };
 
   const getMappingStatus = () => {
-    if (csvColumns.length === 0) return { type: 'none', message: 'No CSV uploaded' };
-    if (mappedColumns.length === 0) return { type: 'none', message: 'No mappings created' };
-    if (unmappedColumns.length === 0) return { type: 'complete', message: 'All columns mapped!' };
-    return { 
-      type: 'partial', 
-      message: `${mappedColumns.length}/${csvColumns.length} columns mapped` 
+    if (csvColumns.length === 0)
+      return { type: "none", message: "No CSV uploaded" };
+    if (mappedColumns.length === 0)
+      return { type: "none", message: "No mappings created" };
+    if (unmappedColumns.length === 0)
+      return { type: "complete", message: "All columns mapped!" };
+    return {
+      type: "partial",
+      message: `${mappedColumns.length}/${csvColumns.length} columns mapped`,
     };
   };
 
@@ -52,12 +63,24 @@ export function MappingDisplay({
     <Card className="w-full">
       <CardHeader>
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg font-semibold">Column Mappings</CardTitle>
+          <CardTitle className="text-lg font-semibold">
+            Column Mappings
+          </CardTitle>
           <div className="flex items-center space-x-2">
-            {status.type === 'complete' && <CheckCircle className="h-5 w-5 text-green-500" />}
-            {status.type === 'partial' && <AlertCircle className="h-5 w-5 text-yellow-500" />}
-            <Badge 
-              variant={status.type === 'complete' ? 'default' : status.type === 'partial' ? 'secondary' : 'outline'}
+            {status.type === "complete" && (
+              <CheckCircle className="h-5 w-5 text-green-500" />
+            )}
+            {status.type === "partial" && (
+              <AlertCircle className="h-5 w-5 text-yellow-500" />
+            )}
+            <Badge
+              variant={
+                status.type === "complete"
+                  ? "default"
+                  : status.type === "partial"
+                    ? "secondary"
+                    : "outline"
+              }
             >
               {status.message}
             </Badge>
@@ -68,7 +91,9 @@ export function MappingDisplay({
         {/* Mapped Columns */}
         {mappedColumns.length > 0 && (
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-green-700">Mapped Columns</h3>
+            <h3 className="text-sm font-semibold text-green-700">
+              Mapped Columns
+            </h3>
             <div className="space-y-3">
               {mappedColumns.map((csvColumn) => {
                 const preview = getColumnPreview(csvColumn);
@@ -80,28 +105,37 @@ export function MappingDisplay({
                     <div className="flex items-center space-x-4 flex-1">
                       <div className="flex-1">
                         <div className="flex items-center space-x-2 mb-1">
-                          <span className="font-medium text-green-800">{csvColumn}</span>
+                          <span className="font-medium text-green-800">
+                            {csvColumn}
+                          </span>
                           <ArrowRight className="h-4 w-4 text-green-600" />
-                          <span className="font-medium text-green-800">{mappings[csvColumn]}</span>
+                          <span className="font-medium text-green-800">
+                            {mappings[csvColumn]}
+                          </span>
                         </div>
                         {preview.length > 0 && (
                           <div className="text-xs text-green-600">
                             Preview: {preview.join(", ")}
-                            {getColumnPreview(csvColumn, 10).length > 3 && "..."}
+                            {getColumnPreview(csvColumn, 10).length > 3 &&
+                              "..."}
                           </div>
                         )}
                       </div>
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Select 
-                        value={mappings[csvColumn]} 
-                        onValueChange={(value) => onMappingUpdate(csvColumn, value)}
+                      <Select
+                        value={mappings[csvColumn]}
+                        onValueChange={(value) =>
+                          onMappingUpdate(csvColumn, value)
+                        }
                       >
                         <SelectTrigger className="w-32 h-8 text-xs">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value={mappings[csvColumn]}>{mappings[csvColumn]}</SelectItem>
+                          <SelectItem value={mappings[csvColumn]}>
+                            {mappings[csvColumn]}
+                          </SelectItem>
                           {availableCaptions.map((caption) => (
                             <SelectItem key={caption} value={caption}>
                               {caption}
@@ -128,7 +162,9 @@ export function MappingDisplay({
         {/* Unmapped Columns */}
         {unmappedColumns.length > 0 && (
           <div className="space-y-4">
-            <h3 className="text-sm font-semibold text-orange-700">Unmapped Columns</h3>
+            <h3 className="text-sm font-semibold text-orange-700">
+              Unmapped Columns
+            </h3>
             <div className="space-y-3">
               {unmappedColumns.map((csvColumn) => {
                 const preview = getColumnPreview(csvColumn);
@@ -139,9 +175,13 @@ export function MappingDisplay({
                   >
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-1">
-                        <span className="font-medium text-orange-800">{csvColumn}</span>
+                        <span className="font-medium text-orange-800">
+                          {csvColumn}
+                        </span>
                         <ArrowRight className="h-4 w-4 text-orange-400" />
-                        <span className="text-orange-600 italic">Not mapped</span>
+                        <span className="text-orange-600 italic">
+                          Not mapped
+                        </span>
                       </div>
                       {preview.length > 0 && (
                         <div className="text-xs text-orange-600">
@@ -151,7 +191,11 @@ export function MappingDisplay({
                       )}
                     </div>
                     <div className="flex items-center space-x-2">
-                      <Select onValueChange={(value) => onMappingUpdate(csvColumn, value)}>
+                      <Select
+                        onValueChange={(value) =>
+                          onMappingUpdate(csvColumn, value)
+                        }
+                      >
                         <SelectTrigger className="w-32 h-8 text-xs">
                           <SelectValue placeholder="Map to..." />
                         </SelectTrigger>
@@ -174,7 +218,9 @@ export function MappingDisplay({
         {/* Available Captions */}
         {availableCaptions.length > 0 && (
           <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-gray-700">Available Captions</h3>
+            <h3 className="text-sm font-semibold text-gray-700">
+              Available Captions
+            </h3>
             <div className="flex flex-wrap gap-2">
               {availableCaptions.map((caption) => (
                 <Badge key={caption} variant="outline" className="text-xs">
@@ -198,21 +244,28 @@ export function MappingDisplay({
           <div className="text-center py-8 text-gray-500">
             <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
             <p className="text-lg font-medium">No Captions Defined</p>
-            <p className="text-sm">Add table captions to start mapping columns</p>
+            <p className="text-sm">
+              Add table captions to start mapping columns
+            </p>
           </div>
         )}
 
         {/* Preview Table */}
         {mappedColumns.length > 0 && csvData.length > 1 && (
           <div className="space-y-2">
-            <h3 className="text-sm font-semibold text-gray-700">Preview Table</h3>
+            <h3 className="text-sm font-semibold text-gray-700">
+              Preview Table
+            </h3>
             <div className="border rounded-lg overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50">
                     <tr>
                       {mappedColumns.map((csvColumn) => (
-                        <th key={csvColumn} className="px-3 py-2 text-left font-medium text-gray-700 border-r last:border-r-0">
+                        <th
+                          key={csvColumn}
+                          className="px-3 py-2 text-left font-medium text-gray-700 border-r last:border-r-0"
+                        >
                           {mappings[csvColumn]}
                         </th>
                       ))}
@@ -224,8 +277,11 @@ export function MappingDisplay({
                         {mappedColumns.map((csvColumn) => {
                           const columnIndex = csvColumns.indexOf(csvColumn);
                           return (
-                            <td key={csvColumn} className="px-3 py-2 border-r last:border-r-0">
-                              {row[columnIndex] || '-'}
+                            <td
+                              key={csvColumn}
+                              className="px-3 py-2 border-r last:border-r-0"
+                            >
+                              {row[columnIndex] || "-"}
                             </td>
                           );
                         })}

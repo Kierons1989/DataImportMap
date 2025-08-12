@@ -12,57 +12,63 @@ export function CSVUpload({ onFileUpload }: CSVUploadProps) {
   const [uploadedFile, setUploadedFile] = useState<string | null>(null);
 
   const parseCSV = (csvText: string): string[][] => {
-    const lines = csvText.split('\n');
+    const lines = csvText.split("\n");
     return lines
-      .filter(line => line.trim() !== '')
-      .map(line => {
+      .filter((line) => line.trim() !== "")
+      .map((line) => {
         // Simple CSV parser - handles basic cases
         const result: string[] = [];
-        let current = '';
+        let current = "";
         let inQuotes = false;
-        
+
         for (let i = 0; i < line.length; i++) {
           const char = line[i];
-          
+
           if (char === '"') {
             inQuotes = !inQuotes;
-          } else if (char === ',' && !inQuotes) {
+          } else if (char === "," && !inQuotes) {
             result.push(current.trim());
-            current = '';
+            current = "";
           } else {
             current += char;
           }
         }
-        
+
         result.push(current.trim());
         return result;
       });
   };
 
-  const handleFile = useCallback((file: File) => {
-    if (file.type === 'text/csv' || file.name.endsWith('.csv')) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const csvText = e.target?.result as string;
-        const csvData = parseCSV(csvText);
-        setUploadedFile(file.name);
-        onFileUpload(csvData, file.name);
-      };
-      reader.readAsText(file);
-    } else {
-      alert('Please upload a CSV file');
-    }
-  }, [onFileUpload]);
+  const handleFile = useCallback(
+    (file: File) => {
+      if (file.type === "text/csv" || file.name.endsWith(".csv")) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const csvText = e.target?.result as string;
+          const csvData = parseCSV(csvText);
+          setUploadedFile(file.name);
+          onFileUpload(csvData, file.name);
+        };
+        reader.readAsText(file);
+      } else {
+        alert("Please upload a CSV file");
+      }
+    },
+    [onFileUpload],
+  );
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    
-    const files = Array.from(e.dataTransfer.files);
-    if (files.length > 0) {
-      handleFile(files[0]);
-    }
-  }, [handleFile]);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setIsDragOver(false);
+
+      const files = Array.from(e.dataTransfer.files);
+      if (files.length > 0) {
+        handleFile(files[0]);
+      }
+    },
+    [handleFile],
+  );
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -74,12 +80,15 @@ export function CSVUpload({ onFileUpload }: CSVUploadProps) {
     setIsDragOver(false);
   }, []);
 
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      handleFile(files[0]);
-    }
-  }, [handleFile]);
+  const handleFileInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        handleFile(files[0]);
+      }
+    },
+    [handleFile],
+  );
 
   const clearFile = () => {
     setUploadedFile(null);
@@ -92,8 +101,8 @@ export function CSVUpload({ onFileUpload }: CSVUploadProps) {
           <div
             className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
               isDragOver
-                ? 'border-blue-500 bg-blue-50'
-                : 'border-gray-300 hover:border-gray-400'
+                ? "border-blue-500 bg-blue-50"
+                : "border-gray-300 hover:border-gray-400"
             }`}
             onDrop={handleDrop}
             onDragOver={handleDragOver}

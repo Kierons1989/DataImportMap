@@ -10,7 +10,10 @@ interface TableCaptionsProps {
   onCaptionsChange: (captions: string[]) => void;
 }
 
-export function TableCaptions({ captions, onCaptionsChange }: TableCaptionsProps) {
+export function TableCaptions({
+  captions,
+  onCaptionsChange,
+}: TableCaptionsProps) {
   const [newCaption, setNewCaption] = useState("");
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState("");
@@ -22,15 +25,21 @@ export function TableCaptions({ captions, onCaptionsChange }: TableCaptionsProps
     }
   }, [newCaption, captions, onCaptionsChange]);
 
-  const removeCaption = useCallback((index: number) => {
-    const newCaptions = captions.filter((_, i) => i !== index);
-    onCaptionsChange(newCaptions);
-  }, [captions, onCaptionsChange]);
+  const removeCaption = useCallback(
+    (index: number) => {
+      const newCaptions = captions.filter((_, i) => i !== index);
+      onCaptionsChange(newCaptions);
+    },
+    [captions, onCaptionsChange],
+  );
 
-  const startEditing = useCallback((index: number) => {
-    setEditingIndex(index);
-    setEditValue(captions[index]);
-  }, [captions]);
+  const startEditing = useCallback(
+    (index: number) => {
+      setEditingIndex(index);
+      setEditValue(captions[index]);
+    },
+    [captions],
+  );
 
   const saveEdit = useCallback(() => {
     if (editingIndex !== null && editValue.trim()) {
@@ -48,15 +57,15 @@ export function TableCaptions({ captions, onCaptionsChange }: TableCaptionsProps
   }, []);
 
   const handleKeyPress = (e: React.KeyboardEvent, action: () => void) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       action();
     }
   };
 
   const handleEditKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       saveEdit();
-    } else if (e.key === 'Escape') {
+    } else if (e.key === "Escape") {
       cancelEdit();
     }
   };
@@ -89,7 +98,9 @@ export function TableCaptions({ captions, onCaptionsChange }: TableCaptionsProps
         {captions.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
             <p>No captions added yet</p>
-            <p className="text-sm">Add captions that will serve as your table headers</p>
+            <p className="text-sm">
+              Add captions that will serve as your table headers
+            </p>
           </div>
         ) : (
           <div className="space-y-2">
@@ -111,7 +122,11 @@ export function TableCaptions({ captions, onCaptionsChange }: TableCaptionsProps
                         className="flex-1"
                         autoFocus
                       />
-                      <Button size="sm" onClick={saveEdit} disabled={!editValue.trim()}>
+                      <Button
+                        size="sm"
+                        onClick={saveEdit}
+                        disabled={!editValue.trim()}
+                      >
                         Save
                       </Button>
                       <Button size="sm" variant="outline" onClick={cancelEdit}>
@@ -157,21 +172,23 @@ export function TableCaptions({ captions, onCaptionsChange }: TableCaptionsProps
           <div className="pt-4 border-t">
             <p className="text-sm text-gray-600 mb-2">Quick suggestions:</p>
             <div className="flex flex-wrap gap-2">
-              {["Name", "Email", "Phone", "Address", "Date", "Amount"].map((suggestion) => (
-                <Button
-                  key={suggestion}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    if (!captions.includes(suggestion)) {
-                      onCaptionsChange([...captions, suggestion]);
-                    }
-                  }}
-                  className="text-xs"
-                >
-                  + {suggestion}
-                </Button>
-              ))}
+              {["Name", "Email", "Phone", "Address", "Date", "Amount"].map(
+                (suggestion) => (
+                  <Button
+                    key={suggestion}
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      if (!captions.includes(suggestion)) {
+                        onCaptionsChange([...captions, suggestion]);
+                      }
+                    }}
+                    className="text-xs"
+                  >
+                    + {suggestion}
+                  </Button>
+                ),
+              )}
             </div>
           </div>
         )}
