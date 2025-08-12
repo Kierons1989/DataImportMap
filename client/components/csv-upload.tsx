@@ -1,7 +1,8 @@
 import { useState, useCallback } from 'react';
-import { Upload, FileText, X } from 'lucide-react';
+import { FileText, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { UploadIcon } from '@/components/ui/upload-icon';
 
 interface CSVUploadProps {
   onFileUpload: (csvData: string[][], fileName: string) => void;
@@ -106,7 +107,11 @@ export function CSVUpload({ onFileUpload }: CSVUploadProps) {
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
           >
-            <Upload className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+            <UploadIcon 
+              className="mx-auto mb-4" 
+              size="default"
+              alt="Upload CSV File"
+            />
             <h3 className="mb-2 text-lg font-medium text-gray-900">Upload CSV File</h3>
             <p className="mb-4 text-sm text-gray-600">
               Drag and drop your CSV file here, or click to browse

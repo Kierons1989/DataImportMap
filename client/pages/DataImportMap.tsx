@@ -21,8 +21,10 @@ import {
   Settings,
   ChevronDown,
 } from 'lucide-react';
+import { List } from '@phosphor-icons/react';
 import { Sidebar } from '@/components/sidebar';
 import { TopBar } from '@/components/top-bar';
+import { UploadIcon } from '@/components/ui/upload-icon';
 
 interface CSVColumn {
   name: string;
@@ -845,11 +847,7 @@ export default function DataImportMap() {
                       {mappingRows.map((row, index) => (
                         <tr key={row.id} className="border-t border-gray-300">
                           <td className="border-r border-gray-300 p-2 text-center">
-                            <div className="flex flex-col gap-1">
-                              <div className="h-1 w-5 bg-gray-600"></div>
-                              <div className="h-1 w-5 bg-gray-600"></div>
-                              <div className="h-1 w-5 bg-gray-600"></div>
-                            </div>
+                            <List className="h-5 w-5 text-gray-600 mx-auto" weight="bold" />
                           </td>
                           <td className="border-r border-gray-300 p-2 text-sm text-gray-800">
                             {row.order}
@@ -931,33 +929,11 @@ export default function DataImportMap() {
                 {!isFileUploaded ? (
                   <div className="flex flex-col items-center gap-6 py-12">
                     <div className="w-25 h-25 text-gray-400">
-                      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
-                        <circle
-                          cx="50"
-                          cy="50"
-                          r="48"
-                          fill="#F2F2F7"
-                          stroke="#778088"
-                          strokeWidth="2"
-                        />
-                        <path d="M25 35h50v40H25z" fill="white" stroke="#778088" strokeWidth="2" />
-                        <path
-                          d="M40 25h20v15H40z"
-                          fill="#E8E9ED"
-                          stroke="#778088"
-                          strokeWidth="2"
-                        />
-                        <circle
-                          cx="30"
-                          cy="70"
-                          r="15"
-                          fill="#E8E9ED"
-                          stroke="#778088"
-                          strokeWidth="2"
-                        />
-                        <path d="M25 65h10v10H25z" fill="white" stroke="#778088" strokeWidth="2" />
-                        <path d="M32 62v6M29 65h6" stroke="#778088" strokeWidth="2" />
-                      </svg>
+                      <UploadIcon 
+                        className="w-full h-full" 
+                        size="lg"
+                        alt="Upload CSV Data"
+                      />
                     </div>
 
                     <div className="space-y-3 text-center">
