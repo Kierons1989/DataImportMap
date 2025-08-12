@@ -14,13 +14,15 @@ import {
   AlertTriangle,
   Upload,
   X,
-  Settings,
-  ChevronDown,
   Send,
   FileText,
   CheckCircle,
   AlertCircle,
+  Settings,
+  ChevronDown,
 } from 'lucide-react';
+import { Sidebar } from '@/components/sidebar';
+import { TopBar } from '@/components/top-bar';
 
 interface CSVColumn {
   name: string;
@@ -591,124 +593,18 @@ export default function DataImportMap() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-100 overflow-hidden">
       {/* Navigation Sidebar */}
-      <div className="flex w-[100px] flex-col items-center bg-[#00336E] py-6">
-        {/* Logo */}
-        <div className="mb-8 h-[38px] w-[76px]">
-          <svg
-            width="76"
-            height="38"
-            viewBox="0 0 76 38"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M68.9658 6.15814C70.2996 6.15814 71.3809 5.07013 71.3809 3.728C71.3809 2.38587 70.2996 1.29785 68.9658 1.29785C67.632 1.29785 66.5508 2.38587 66.5508 3.728C66.5508 5.07013 67.632 6.15814 68.9658 6.15814Z"
-              fill="white"
-            />
-            <path d="M60.5454 7.62207H55.6641V34.6076H60.5454V7.62207Z" fill="white" />
-            <path
-              d="M45.1471 12.0374H41.2344V7.56543H53.9411V12.0374H50.0284V34.551H45.1471V12.0374Z"
-              fill="white"
-            />
-            <path
-              d="M33.8092 7.17969C29.3545 7.17969 27.3008 9.45413 27.3008 13.2708V28.8415C27.3008 32.6582 29.3498 34.9327 33.8092 34.9327C38.2686 34.9327 40.3176 32.6582 40.3176 28.8415V13.2708C40.3186 9.45413 38.2649 7.17969 33.8092 7.17969ZM35.4363 29.038C35.4363 29.9649 34.9324 30.4644 33.8092 30.4644C32.686 30.4644 32.1821 29.963 32.1821 29.038V13.078C32.1821 12.1512 32.686 11.6516 33.8092 11.6516C34.9324 11.6516 35.4363 12.1521 35.4363 13.078V29.038Z"
-              fill="white"
-            />
-            <path
-              d="M0.0898438 7.61426H10.2884L10.782 12.0862H4.97117V18.0615H9.07666L9.67272 22.5334H4.97117V30.1279H10.9366L11.4768 34.5998H0.0898438V7.61426Z"
-              fill="white"
-            />
-            <path
-              d="M12.4991 7.5918L12.4805 8.96165L15.7589 34.62H22.8383L26.1074 8.96165L26.0999 7.5918H21.6508L21.4375 9.45843L19.3689 26.7114H19.232L17.1299 9.45194L16.8849 7.5918H12.4991Z"
-              fill="white"
-            />
-            <path
-              d="M75.9104 34.551L71.41 18.4307L74.5971 8.96216L74.6074 7.56543H70.3333L69.9962 8.6906L68.9689 11.3951L67.9434 8.69523L67.528 7.56543H63.3508L63.3434 8.96216L66.5287 18.4307L62.0273 34.551H66.9087L68.9689 25.8305L71.03 34.551H75.9104Z"
-              fill="white"
-            />
-          </svg>
-        </div>
-
-        {/* Navigation Items */}
-        <div className="flex flex-col gap-4">
-          {[
-            { icon: '🏠', label: 'Home', active: true },
-            { icon: '📁', label: 'Modules' },
-            { icon: '✓', label: 'Tasks' },
-            { icon: '👥', label: 'Portal\nQueue' },
-            { icon: '📄', label: 'Files' },
-            { icon: '👁', label: 'Insights' },
-            { icon: '📊', label: 'Reports' },
-          ].map((item, index) => (
-            <div
-              key={index}
-              className={`flex flex-col items-center rounded p-3 ${item.active ? 'bg-[#00336E]' : ''}`}
-            >
-              <div className="mb-1 text-xl text-white">{item.icon}</div>
-              <div className="text-center text-xs leading-tight text-white">{item.label}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Evotix Core Logo */}
-        <div className="mt-auto">
-          <div className="text-center text-xs text-white opacity-70">
-            <div className="font-bold">EVOTIX</div>
-            <div className="text-[10px]">Core</div>
-          </div>
-        </div>
-      </div>
+      <Sidebar activeItem="Modules" />
 
       {/* Main Content */}
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top Menu */}
-        <div className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-3">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-2 text-sm">
-            <span className="font-medium text-blue-600">Home</span>
-            <ChevronDown className="h-4 w-4 rotate-[-90deg] text-gray-400" />
-            <span className="font-medium text-blue-600">Data Import Map</span>
-            <ChevronDown className="h-4 w-4 rotate-[-90deg] text-gray-400" />
-            <span className="text-gray-600">Edit</span>
-          </div>
-
-          {/* Right side */}
-          <div className="flex items-center gap-6">
-            {/* Org Unit */}
-            <div className="flex items-center gap-2">
-              <div className="text-sm text-gray-600">Org Unit</div>
-              <div className="text-sm font-semibold text-blue-600">East Kilbride</div>
-            </div>
-
-            {/* User Menu */}
-            <div className="flex items-center gap-2">
-              <div className="text-sm font-semibold text-gray-600">Michael Scott</div>
-              <ChevronDown className="h-4 w-4 text-gray-600" />
-            </div>
-
-            {/* Settings */}
-            <div className="flex items-center gap-2">
-              <Settings className="h-5 w-5 text-gray-600" />
-              <span className="text-sm font-semibold text-gray-600">Settings</span>
-              <ChevronDown className="h-4 w-4 text-gray-600" />
-            </div>
-
-            {/* Help */}
-            <div className="flex items-center gap-2">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-gray-600">
-                <span className="text-xs font-bold text-gray-600">?</span>
-              </div>
-              <span className="text-sm font-semibold text-gray-600">Help</span>
-              <ChevronDown className="h-4 w-4 text-gray-600" />
-            </div>
-          </div>
-        </div>
+        <TopBar currentPage="Data Import Map" orgUnit="East Kilbride" userName="Michael Scott" />
 
         {/* Page Content */}
-        <div className="flex-1 p-6">
-          <div className="max-w-[988px]">
+        <div className="flex-1 p-6 overflow-y-auto">
+          <div className="max-w-[988px] mx-auto">
             <div className="rounded bg-white p-10">
               {/* Details Section */}
               <Card className="mb-10">
