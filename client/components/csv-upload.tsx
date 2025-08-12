@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
-import { FileText, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { FileText, Trash } from '@phosphor-icons/react';
 import { UploadIcon } from '@/components/ui/upload-icon';
 
 interface CSVUploadProps {
@@ -131,7 +131,7 @@ export function CSVUpload({ onFileUpload }: CSVUploadProps) {
         ) : (
           <div className="flex items-center justify-between rounded-lg border border-green-200 bg-green-50 p-4">
             <div className="flex items-center space-x-3">
-              <FileText className="h-5 w-5 text-green-600" />
+              <FileText className="h-5 w-5 text-green-600" weight="regular" />
               <span className="text-sm font-medium text-green-800">{uploadedFile}</span>
             </div>
             <Button
@@ -140,7 +140,7 @@ export function CSVUpload({ onFileUpload }: CSVUploadProps) {
               onClick={clearFile}
               className="text-green-600 hover:text-green-800"
             >
-              <X className="h-4 w-4" />
+              <Trash className="h-4 w-4" weight="regular" />
             </Button>
           </div>
         )}

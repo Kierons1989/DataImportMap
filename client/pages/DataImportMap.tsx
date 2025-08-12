@@ -11,17 +11,17 @@ import {
 } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
-  AlertTriangle,
+  Gear,
+  CaretDown,
+  Plus,
+  Trash,
   Upload,
-  X,
-  Send,
+  PaperPlaneTilt,
   FileText,
   CheckCircle,
-  AlertCircle,
-  Settings,
-  ChevronDown,
-} from 'lucide-react';
-import { List } from '@phosphor-icons/react';
+  Warning,
+  List,
+} from '@phosphor-icons/react';
 import { Sidebar } from '@/components/sidebar';
 import { TopBar } from '@/components/top-bar';
 import { UploadIcon } from '@/components/ui/upload-icon';
@@ -657,8 +657,8 @@ export default function DataImportMap() {
                       <span className="text-gray-700">Person Register</span>
                     </div>
                     <Button className="border-3 h-9 border-blue-600 bg-transparent px-3 text-blue-600">
-                      <Settings className="h-5 w-5" />
-                      <ChevronDown className="h-5 w-5" />
+                      <Gear className="h-5 w-5" weight="regular" />
+                      <CaretDown className="h-5 w-5" weight="regular" />
                     </Button>
                   </div>
                 </div>
@@ -808,7 +808,7 @@ export default function DataImportMap() {
 
               {/* Warning Banner */}
               <div className="mb-6 flex items-center gap-4 rounded border border-yellow-200 bg-yellow-50 p-4">
-                <AlertTriangle className="h-8 w-8 text-yellow-600" />
+                <Warning className="h-8 w-8 text-yellow-600" />
                 <span className="text-yellow-800">
                   All required fields (indicated with *) must be mapped. Record fields must be
                   matched by ID.
@@ -903,7 +903,7 @@ export default function DataImportMap() {
                               className="h-8 bg-red-600 px-3 hover:bg-red-700"
                               onClick={() => removeMappingRow(row.id)}
                             >
-                              <X className="mr-1 h-4 w-4" />
+                              <Trash className="mr-1 h-5 w-5" weight="regular" />
                               Remove
                             </Button>
                           </td>
@@ -916,7 +916,7 @@ export default function DataImportMap() {
 
               {/* Add Button - Always show */}
               <Button className="mb-6 bg-blue-600 hover:bg-blue-700" onClick={addMappingRow}>
-                <span className="mr-2 text-xl">+</span>
+                <Plus className="mr-2 h-5 w-5" weight="regular" />
                 Add
               </Button>
 
@@ -949,7 +949,7 @@ export default function DataImportMap() {
                       onClick={handleUploadClick}
                       disabled={isProcessing}
                     >
-                      <Upload className="mr-2 h-4 w-4" />
+                      <Upload className="mr-2 h-5 w-5" weight="regular" />
                       {isProcessing ? 'Processing...' : 'Upload File'}
                     </Button>
 
@@ -1031,7 +1031,7 @@ export default function DataImportMap() {
                           disabled={!currentMessage.trim() || isAssistantTyping}
                           className="bg-blue-600 hover:bg-blue-700"
                         >
-                          <Send className="h-4 w-4" />
+                          <PaperPlaneTilt className="h-5 w-5" weight="regular" />
                         </Button>
                       </div>
                     </div>

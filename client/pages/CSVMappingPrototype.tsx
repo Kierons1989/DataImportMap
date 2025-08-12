@@ -6,7 +6,7 @@ import { TableCaptions } from '@/components/table-captions';
 import { AIChat } from '@/components/ai-chat';
 import { MappingDisplay } from '@/components/mapping-display';
 import { mockCSVData, suggestedCaptions, getSuggestedCaptionsForData } from '@/lib/mock-data';
-import { FileSpreadsheet, MessageSquare, Settings, Eye } from 'lucide-react';
+import { FileXls, ChatCircle, Gear, Eye } from '@phosphor-icons/react';
 
 export default function CSVMappingPrototype() {
   const [csvData, setCSVData] = useState<string[][]>([]);
@@ -95,7 +95,7 @@ export default function CSVMappingPrototype() {
                   onClick={() => loadSampleData(key as keyof typeof mockCSVData)}
                   className="flex h-auto flex-col items-center space-y-2 p-4"
                 >
-                  <FileSpreadsheet className="h-6 w-6" />
+                  <FileXls className="h-6 w-6" weight="regular" />
                   <span className="font-medium capitalize">{key}</span>
                   <span className="text-xs text-gray-500">{dataset.filename}</span>
                 </Button>
@@ -108,34 +108,22 @@ export default function CSVMappingPrototype() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="grid w-full grid-cols-4 bg-white shadow-sm">
             <TabsTrigger value="upload" className="flex items-center space-x-2">
-              <FileSpreadsheet className="h-4 w-4" />
+              <FileXls className="h-4 w-4" weight="regular" />
               <span>Upload CSV</span>
               {progress.upload && <div className="ml-1 h-2 w-2 rounded-full bg-green-500" />}
             </TabsTrigger>
-            <TabsTrigger
-              value="captions"
-              className="flex items-center space-x-2"
-              disabled={!progress.upload}
-            >
-              <Settings className="h-4 w-4" />
+            <TabsTrigger value="captions" className="flex items-center space-x-2" disabled={!progress.upload}>
+              <Gear className="h-4 w-4" weight="regular" />
               <span>Set Captions</span>
               {progress.captions && <div className="ml-1 h-2 w-2 rounded-full bg-green-500" />}
             </TabsTrigger>
-            <TabsTrigger
-              value="mapping"
-              className="flex items-center space-x-2"
-              disabled={!progress.captions}
-            >
-              <MessageSquare className="h-4 w-4" />
+            <TabsTrigger value="mapping" className="flex items-center space-x-2" disabled={!progress.captions}>
+              <ChatCircle className="h-4 w-4" weight="regular" />
               <span>AI Mapping</span>
               {progress.mapping && <div className="ml-1 h-2 w-2 rounded-full bg-green-500" />}
             </TabsTrigger>
-            <TabsTrigger
-              value="preview"
-              className="flex items-center space-x-2"
-              disabled={!progress.mapping}
-            >
-              <Eye className="h-4 w-4" />
+            <TabsTrigger value="preview" className="flex items-center space-x-2" disabled={!progress.mapping}>
+              <Eye className="h-4 w-4" weight="regular" />
               <span>Preview</span>
               {progress.complete && <div className="ml-1 h-2 w-2 rounded-full bg-green-500" />}
             </TabsTrigger>

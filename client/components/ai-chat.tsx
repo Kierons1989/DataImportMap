@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Send, Bot, User } from 'lucide-react';
+import { PaperPlaneTilt, Robot, User } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -224,7 +224,7 @@ export function AIChat({
     <Card className="flex h-[500px] w-full flex-col">
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-lg font-semibold">
-          <Bot className="h-5 w-5 text-blue-500" />
+          <Robot className="h-5 w-5 text-blue-500" weight="regular" />
           AI Mapping Assistant
         </CardTitle>
       </CardHeader>
@@ -240,7 +240,7 @@ export function AIChat({
               >
                 {message.type === 'assistant' && (
                   <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-500">
-                    <Bot className="h-4 w-4 text-white" />
+                    <Robot className="h-4 w-4 text-white" weight="regular" />
                   </div>
                 )}
                 <div
@@ -291,7 +291,7 @@ export function AIChat({
             {isTyping && (
               <div className="flex items-start space-x-2">
                 <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-500">
-                  <Bot className="h-4 w-4 text-white" />
+                  <Robot className="h-4 w-4 text-white" weight="regular" />
                 </div>
                 <div className="rounded-lg bg-gray-100 p-3">
                   <div className="flex space-x-1">
@@ -320,7 +320,7 @@ export function AIChat({
               className="flex-1"
             />
             <Button onClick={sendMessage} disabled={!inputValue.trim() || isTyping}>
-              <Send className="h-4 w-4" />
+              <PaperPlaneTilt className="h-4 w-4" weight="regular" />
             </Button>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Plus, X, Edit2 } from 'lucide-react';
+import { Plus, Trash, PencilSimple } from '@phosphor-icons/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -84,7 +84,7 @@ export function TableCaptions({ captions, onCaptionsChange }: TableCaptionsProps
             className="flex-1"
           />
           <Button onClick={addCaption} disabled={!newCaption.trim()}>
-            <Plus className="h-4 w-4" />
+            <Plus className="h-5 w-5" weight="regular" />
             Add
           </Button>
         </div>
@@ -135,7 +135,7 @@ export function TableCaptions({ captions, onCaptionsChange }: TableCaptionsProps
                           onClick={() => startEditing(index)}
                           className="h-8 w-8 p-0"
                         >
-                          <Edit2 className="h-3 w-3" />
+                          <PencilSimple className="h-3 w-3" weight="regular" />
                         </Button>
                         <Button
                           size="sm"
@@ -143,7 +143,7 @@ export function TableCaptions({ captions, onCaptionsChange }: TableCaptionsProps
                           onClick={() => removeCaption(index)}
                           className="h-8 w-8 p-0 text-red-500 hover:text-red-700"
                         >
-                          <X className="h-3 w-3" />
+                          <Trash className="h-3 w-3" weight="regular" />
                         </Button>
                       </div>
                     </>
