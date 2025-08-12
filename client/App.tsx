@@ -20,7 +20,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<CSVMappingPrototype />} />
+          <Route path="/" element={<DataImportMap />} />
+          <Route path="/prototype" element={<CSVMappingPrototype />} />
           <Route path="/original" element={<Index />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
