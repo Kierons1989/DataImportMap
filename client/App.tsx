@@ -9,6 +9,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import CSVMappingPrototype from "./pages/CSVMappingPrototype";
+import DataImportMap from "./pages/DataImportMap";
 
 const queryClient = new QueryClient();
 
