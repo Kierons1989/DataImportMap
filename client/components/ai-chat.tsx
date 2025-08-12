@@ -1,14 +1,14 @@
-import { useState, useRef, useEffect } from "react";
-import { Send, Bot, User } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
+import { useState, useRef, useEffect } from 'react';
+import { Send, Bot, User } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Badge } from '@/components/ui/badge';
 
 interface Message {
   id: string;
-  type: "user" | "assistant";
+  type: 'user' | 'assistant';
   content: string;
   timestamp: Date;
   mappingSuggestion?: {
@@ -34,7 +34,7 @@ export function AIChat({
   onMappingRemove,
 }: AIChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -44,18 +44,16 @@ export function AIChat({
       setTimeout(
         () => {
           const lowerMessage = userMessage.toLowerCase();
-          let response = "";
+          let response = '';
           let mappingSuggestion = undefined;
 
           // Analyze user intent and provide appropriate responses
           if (
-            lowerMessage.includes("map") ||
-            lowerMessage.includes("connect") ||
-            lowerMessage.includes("match")
+            lowerMessage.includes('map') ||
+            lowerMessage.includes('connect') ||
+            lowerMessage.includes('match')
           ) {
-            const unmappedColumns = csvColumns.filter(
-              (col) => !currentMappings[col],
-            );
+            const unmappedColumns = csvColumns.filter((col) => !currentMappings[col]);
             const availableCaptions = captions.filter(
               (cap) => !Object.values(currentMappings).includes(cap),
             );
@@ -80,29 +78,23 @@ export function AIChat({
                 "All CSV columns have been mapped! Is there anything you'd like to adjust?";
             } else {
               response =
-                "All your captions have been used. You may need to add more captions or review existing mappings.";
+                'All your captions have been used. You may need to add more captions or review existing mappings.';
             }
-          } else if (
-            lowerMessage.includes("help") ||
-            lowerMessage.includes("how")
-          ) {
+          } else if (lowerMessage.includes('help') || lowerMessage.includes('how')) {
             response =
               "I can help you map your CSV columns to your desired table captions. I'll analyze the column names and suggest the best matches. You can ask me to 'map columns', 'suggest mappings', or tell me about specific columns you'd like to map.";
           } else if (
-            lowerMessage.includes("remove") ||
-            lowerMessage.includes("delete") ||
-            lowerMessage.includes("unmap")
+            lowerMessage.includes('remove') ||
+            lowerMessage.includes('delete') ||
+            lowerMessage.includes('unmap')
           ) {
             const mappedColumns = Object.keys(currentMappings);
             if (mappedColumns.length > 0) {
-              response = `I can help you remove mappings. Currently mapped columns: ${mappedColumns.join(", ")}. Which one would you like to unmap?`;
+              response = `I can help you remove mappings. Currently mapped columns: ${mappedColumns.join(', ')}. Which one would you like to unmap?`;
             } else {
-              response = "There are no mappings to remove at the moment.";
+              response = 'There are no mappings to remove at the moment.';
             }
-          } else if (
-            lowerMessage.includes("status") ||
-            lowerMessage.includes("progress")
-          ) {
+          } else if (lowerMessage.includes('status') || lowerMessage.includes('progress')) {
             const mappedCount = Object.keys(currentMappings).length;
             const totalColumns = csvColumns.length;
             response = `Progress: ${mappedCount}/${totalColumns} columns mapped. ${totalColumns - mappedCount} columns still need mapping.`;
@@ -130,9 +122,7 @@ export function AIChat({
                 const bestMatch =
                   availableCaptions.find(
                     (cap) =>
-                      cap
-                        .toLowerCase()
-                        .includes(mentionedColumn.toLowerCase()) ||
+                      cap.toLowerCase().includes(mentionedColumn.toLowerCase()) ||
                       mentionedColumn.toLowerCase().includes(cap.toLowerCase()),
                   ) || availableCaptions[0];
                 response = `For the "${mentionedColumn}" column, I suggest mapping it to "${bestMatch}". Does this make sense?`;
@@ -152,7 +142,7 @@ export function AIChat({
 
           resolve({
             id: Date.now().toString(),
-            type: "assistant",
+            type: 'assistant',
             content: response,
             timestamp: new Date(),
             mappingSuggestion,
@@ -168,27 +158,27 @@ export function AIChat({
 
     const userMessage: Message = {
       id: Date.now().toString(),
-      type: "user",
+      type: 'user',
       content: inputValue,
       timestamp: new Date(),
     };
 
     setMessages((prev) => [...prev, userMessage]);
-    setInputValue("");
+    setInputValue('');
     setIsTyping(true);
 
     try {
       const aiResponse = await generateAIResponse(inputValue);
       setMessages((prev) => [...prev, aiResponse]);
     } catch (error) {
-      console.error("Error generating AI response:", error);
+      console.error('Error generating AI response:', error);
     } finally {
       setIsTyping(false);
     }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       sendMessage();
     }
@@ -198,7 +188,7 @@ export function AIChat({
     onMappingUpdate(csvColumn, caption);
     const confirmMessage: Message = {
       id: Date.now().toString(),
-      type: "assistant",
+      type: 'assistant',
       content: `Perfect! I've mapped "${csvColumn}" to "${caption}".`,
       timestamp: new Date(),
     };
@@ -209,9 +199,9 @@ export function AIChat({
   useEffect(() => {
     if (messages.length === 0 && csvColumns.length > 0) {
       const welcomeMessage: Message = {
-        id: "welcome",
-        type: "assistant",
-        content: `Hello! I can see you have ${csvColumns.length} columns in your CSV: ${csvColumns.join(", ")}. I'm ready to help you map these to your ${captions.length} captions. What would you like me to help you with?`,
+        id: 'welcome',
+        type: 'assistant',
+        content: `Hello! I can see you have ${csvColumns.length} columns in your CSV: ${csvColumns.join(', ')}. I'm ready to help you map these to your ${captions.length} captions. What would you like me to help you with?`,
         timestamp: new Date(),
       };
       setMessages([welcomeMessage]);
@@ -222,7 +212,7 @@ export function AIChat({
   useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollElement = scrollAreaRef.current.querySelector(
-        "[data-radix-scroll-area-viewport]",
+        '[data-radix-scroll-area-viewport]',
       );
       if (scrollElement) {
         scrollElement.scrollTop = scrollElement.scrollHeight;
@@ -231,53 +221,46 @@ export function AIChat({
   }, [messages, isTyping]);
 
   return (
-    <Card className="w-full h-[500px] flex flex-col">
+    <Card className="flex h-[500px] w-full flex-col">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold flex items-center gap-2">
+        <CardTitle className="flex items-center gap-2 text-lg font-semibold">
           <Bot className="h-5 w-5 text-blue-500" />
           AI Mapping Assistant
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1 flex flex-col p-0">
+      <CardContent className="flex flex-1 flex-col p-0">
         <ScrollArea className="flex-1 px-4" ref={scrollAreaRef}>
           <div className="space-y-4 pb-4">
             {messages.map((message) => (
               <div
                 key={message.id}
                 className={`flex items-start space-x-2 ${
-                  message.type === "user" ? "justify-end" : "justify-start"
+                  message.type === 'user' ? 'justify-end' : 'justify-start'
                 }`}
               >
-                {message.type === "assistant" && (
-                  <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                {message.type === 'assistant' && (
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-500">
                     <Bot className="h-4 w-4 text-white" />
                   </div>
                 )}
                 <div
                   className={`max-w-[80%] rounded-lg p-3 ${
-                    message.type === "user"
-                      ? "bg-blue-500 text-white"
-                      : "bg-gray-100 text-gray-900"
+                    message.type === 'user' ? 'bg-blue-500 text-white' : 'bg-gray-100 text-gray-900'
                   }`}
                 >
                   <p className="text-sm">{message.content}</p>
                   {message.mappingSuggestion && (
-                    <div className="mt-3 p-2 bg-white rounded border space-y-2">
+                    <div className="mt-3 space-y-2 rounded border bg-white p-2">
                       <div className="flex items-center justify-between">
                         <span className="text-xs font-medium text-gray-600">
                           Suggested Mapping:
                         </span>
                         <Badge variant="secondary" className="text-xs">
-                          {Math.round(
-                            message.mappingSuggestion.confidence * 100,
-                          )}
-                          % match
+                          {Math.round(message.mappingSuggestion.confidence * 100)}% match
                         </Badge>
                       </div>
                       <div className="text-sm">
-                        <span className="font-medium">
-                          {message.mappingSuggestion.csvColumn}
-                        </span>
+                        <span className="font-medium">{message.mappingSuggestion.csvColumn}</span>
                         <span className="mx-2">→</span>
                         <span className="font-medium">
                           {message.mappingSuggestion.targetCaption}
@@ -298,8 +281,8 @@ export function AIChat({
                     </div>
                   )}
                 </div>
-                {message.type === "user" && (
-                  <div className="flex-shrink-0 w-8 h-8 bg-gray-500 rounded-full flex items-center justify-center">
+                {message.type === 'user' && (
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gray-500">
                     <User className="h-4 w-4 text-white" />
                   </div>
                 )}
@@ -307,19 +290,19 @@ export function AIChat({
             ))}
             {isTyping && (
               <div className="flex items-start space-x-2">
-                <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-500">
                   <Bot className="h-4 w-4 text-white" />
                 </div>
-                <div className="bg-gray-100 rounded-lg p-3">
+                <div className="rounded-lg bg-gray-100 p-3">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400"></div>
                     <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.1s" }}
+                      className="h-2 w-2 animate-bounce rounded-full bg-gray-400"
+                      style={{ animationDelay: '0.1s' }}
                     ></div>
                     <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                      style={{ animationDelay: "0.2s" }}
+                      className="h-2 w-2 animate-bounce rounded-full bg-gray-400"
+                      style={{ animationDelay: '0.2s' }}
                     ></div>
                   </div>
                 </div>
@@ -336,10 +319,7 @@ export function AIChat({
               onKeyPress={handleKeyPress}
               className="flex-1"
             />
-            <Button
-              onClick={sendMessage}
-              disabled={!inputValue.trim() || isTyping}
-            >
+            <Button onClick={sendMessage} disabled={!inputValue.trim() || isTyping}>
               <Send className="h-4 w-4" />
             </Button>
           </div>

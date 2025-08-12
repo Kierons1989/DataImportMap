@@ -1,15 +1,15 @@
-import { useState, useRef, useCallback, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
+import { useState, useRef, useCallback, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
+} from '@/components/ui/select';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   AlertTriangle,
   Upload,
@@ -20,7 +20,7 @@ import {
   FileText,
   CheckCircle,
   AlertCircle,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface CSVColumn {
   name: string;
@@ -43,7 +43,7 @@ interface MappingRow {
 
 interface ChatMessage {
   id: string;
-  type: "user" | "assistant";
+  type: 'user' | 'assistant';
   content: string;
   timestamp: Date;
   suggestions?: MappingSuggestion[];
@@ -57,104 +57,104 @@ interface MappingSuggestion {
 }
 
 const availableCaptions = [
-  "Reference",
-  "Org Unit",
-  "Forename(s)",
-  "Surname",
-  "Email",
-  "Job Title",
-  "Manager Name",
-  "Phone",
-  "Department",
-  "Location",
-  "Start Date",
-  "Employee ID",
-  "First Name",
-  "Last Name",
-  "Full Name",
-  "Username",
-  "Role",
-  "Status",
+  'Reference',
+  'Org Unit',
+  'Forename(s)',
+  'Surname',
+  'Email',
+  'Job Title',
+  'Manager Name',
+  'Phone',
+  'Department',
+  'Location',
+  'Start Date',
+  'Employee ID',
+  'First Name',
+  'Last Name',
+  'Full Name',
+  'Username',
+  'Role',
+  'Status',
 ];
 
 export default function DataImportMap() {
-  const [importType, setImportType] = useState("module");
-  const [delimiter, setDelimiter] = useState("comma");
-  const [operationType, setOperationType] = useState("insert-update");
+  const [importType, setImportType] = useState('module');
+  const [delimiter, setDelimiter] = useState('comma');
+  const [operationType, setOperationType] = useState('insert-update');
   const [hasHeader, setHasHeader] = useState(true);
-  const [title, setTitle] = useState("Workday Import");
-  const [description, setDescription] = useState("Example HR import form");
-  const [dateFormat, setDateFormat] = useState("DD/MM/YYYY");
+  const [title, setTitle] = useState('Workday Import');
+  const [description, setDescription] = useState('Example HR import form');
+  const [dateFormat, setDateFormat] = useState('DD/MM/YYYY');
 
   // File upload and CSV data
   const [csvData, setCSVData] = useState<string[][]>([]);
   const [csvColumns, setCSVColumns] = useState<CSVColumn[]>([]);
-  const [fileName, setFileName] = useState<string>("");
+  const [fileName, setFileName] = useState<string>('');
   const [isFileUploaded, setIsFileUploaded] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Mapping state - Initialize with predefined captions
   const [mappingRows, setMappingRows] = useState<MappingRow[]>([
     {
-      id: "row-0",
+      id: 'row-0',
       order: 0,
-      header: "N/A",
-      sample: "N/A",
-      caption: "Reference",
+      header: 'N/A',
+      sample: 'N/A',
+      caption: 'Reference',
       keyField: true,
       matchById: true,
     },
     {
-      id: "row-1",
+      id: 'row-1',
       order: 1,
-      header: "N/A",
-      sample: "N/A",
-      caption: "Org Unit",
+      header: 'N/A',
+      sample: 'N/A',
+      caption: 'Org Unit',
       keyField: false,
       matchById: false,
     },
     {
-      id: "row-2",
+      id: 'row-2',
       order: 2,
-      header: "N/A",
-      sample: "N/A",
-      caption: "Forename(s)",
+      header: 'N/A',
+      sample: 'N/A',
+      caption: 'Forename(s)',
       keyField: false,
       matchById: false,
     },
     {
-      id: "row-3",
+      id: 'row-3',
       order: 3,
-      header: "N/A",
-      sample: "N/A",
-      caption: "Surname",
+      header: 'N/A',
+      sample: 'N/A',
+      caption: 'Surname',
       keyField: false,
       matchById: false,
     },
     {
-      id: "row-4",
+      id: 'row-4',
       order: 4,
-      header: "N/A",
-      sample: "N/A",
-      caption: "Email",
+      header: 'N/A',
+      sample: 'N/A',
+      caption: 'Email',
       keyField: false,
       matchById: false,
     },
     {
-      id: "row-5",
+      id: 'row-5',
       order: 5,
-      header: "N/A",
-      sample: "N/A",
-      caption: "Job Title",
+      header: 'N/A',
+      sample: 'N/A',
+      caption: 'Job Title',
       keyField: false,
       matchById: false,
     },
     {
-      id: "row-6",
+      id: 'row-6',
       order: 6,
-      header: "N/A",
-      sample: "N/A",
-      caption: "Manager Name",
+      header: 'N/A',
+      sample: 'N/A',
+      caption: 'Manager Name',
       keyField: false,
       matchById: false,
     },
@@ -162,19 +162,19 @@ export default function DataImportMap() {
 
   // AI Assistant state
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
-  const [currentMessage, setCurrentMessage] = useState("");
+  const [currentMessage, setCurrentMessage] = useState('');
   const [isAssistantTyping, setIsAssistantTyping] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const parseCSV = useCallback(
     (csvText: string): string[][] => {
-      const lines = csvText.split("\n").filter((line) => line.trim() !== "");
-      const delim = delimiter === "comma" ? "," : "\t";
+      const lines = csvText.split('\n').filter((line) => line.trim() !== '');
+      const delim = delimiter === 'comma' ? ',' : '\t';
 
       return lines.map((line) => {
         const result = [];
-        let current = "";
+        let current = '';
         let inQuotes = false;
 
         for (let i = 0; i < line.length; i++) {
@@ -184,7 +184,7 @@ export default function DataImportMap() {
             inQuotes = !inQuotes;
           } else if (char === delim && !inQuotes) {
             result.push(current.trim());
-            current = "";
+            current = '';
           } else {
             current += char;
           }
@@ -207,25 +207,21 @@ export default function DataImportMap() {
       const columns: CSVColumn[] = [];
 
       for (let i = 0; i < maxColumns; i++) {
-        const columnData = dataRows.map((row) => row[i] || "").filter(Boolean);
+        const columnData = dataRows.map((row) => row[i] || '').filter(Boolean);
         const sample = columnData.slice(0, 3);
 
         // Determine column type
-        let type = "text";
-        if (columnData.every((val) => !isNaN(Number(val)) && val !== "")) {
-          type = "number";
-        } else if (columnData.some((val) => val.includes("@"))) {
-          type = "email";
-        } else if (
-          columnData.some((val) => /\d{1,2}\/\d{1,2}\/\d{4}/.test(val))
-        ) {
-          type = "date";
+        let type = 'text';
+        if (columnData.every((val) => !isNaN(Number(val)) && val !== '')) {
+          type = 'number';
+        } else if (columnData.some((val) => val.includes('@'))) {
+          type = 'email';
+        } else if (columnData.some((val) => /\d{1,2}\/\d{1,2}\/\d{4}/.test(val))) {
+          type = 'date';
         }
 
         columns.push({
-          name: headerRow
-            ? headerRow[i] || `Column ${i + 1}`
-            : `Column ${i + 1}`,
+          name: headerRow ? headerRow[i] || `Column ${i + 1}` : `Column ${i + 1}`,
           index: i,
           sample,
           type,
@@ -240,110 +236,103 @@ export default function DataImportMap() {
   const generateAIMapping = useCallback(
     (columns: CSVColumn[]): MappingSuggestion[] => {
       const suggestions: MappingSuggestion[] = [];
-      const existingCaptions = mappingRows
-        .map((row) => row.caption)
-        .filter(Boolean);
+      const existingCaptions = mappingRows.map((row) => row.caption).filter(Boolean);
 
       columns.forEach((column, index) => {
         const columnName = column.name.toLowerCase();
-        const sampleData = column.sample.join(" ").toLowerCase();
+        const sampleData = column.sample.join(' ').toLowerCase();
 
-        let bestMatch = { caption: "", confidence: 0, reasoning: "" };
+        let bestMatch = { caption: '', confidence: 0, reasoning: '' };
 
         // Smart matching logic against existing captions
         for (const caption of existingCaptions) {
           const captionLower = caption.toLowerCase();
 
           if (
-            (captionLower.includes("forename") ||
-              captionLower.includes("first")) &&
-            (columnName.includes("first") ||
-              columnName.includes("forename") ||
-              (column.type === "text" &&
-                column.sample.some((s) => s.length > 0 && s.length < 20)))
+            (captionLower.includes('forename') || captionLower.includes('first')) &&
+            (columnName.includes('first') ||
+              columnName.includes('forename') ||
+              (column.type === 'text' && column.sample.some((s) => s.length > 0 && s.length < 20)))
           ) {
             if (bestMatch.confidence < 0.9) {
               bestMatch = {
                 caption,
                 confidence: 0.9,
-                reasoning: "Contains first names",
+                reasoning: 'Contains first names',
               };
             }
           } else if (
-            (captionLower.includes("surname") ||
-              captionLower.includes("last")) &&
-            (columnName.includes("last") ||
-              columnName.includes("surname") ||
-              columnName.includes("family"))
+            (captionLower.includes('surname') || captionLower.includes('last')) &&
+            (columnName.includes('last') ||
+              columnName.includes('surname') ||
+              columnName.includes('family'))
           ) {
             if (bestMatch.confidence < 0.9) {
               bestMatch = {
                 caption,
                 confidence: 0.9,
-                reasoning: "Contains surnames",
+                reasoning: 'Contains surnames',
               };
             }
           } else if (
-            captionLower.includes("email") &&
-            (columnName.includes("email") || column.type === "email")
+            captionLower.includes('email') &&
+            (columnName.includes('email') || column.type === 'email')
           ) {
             if (bestMatch.confidence < 0.95) {
               bestMatch = {
                 caption,
                 confidence: 0.95,
-                reasoning: "Contains email addresses",
+                reasoning: 'Contains email addresses',
               };
             }
           } else if (
-            (captionLower.includes("title") || captionLower.includes("job")) &&
-            (columnName.includes("title") ||
-              columnName.includes("job") ||
-              columnName.includes("position"))
+            (captionLower.includes('title') || captionLower.includes('job')) &&
+            (columnName.includes('title') ||
+              columnName.includes('job') ||
+              columnName.includes('position'))
           ) {
             if (bestMatch.confidence < 0.8) {
               bestMatch = {
                 caption,
                 confidence: 0.8,
-                reasoning: "Contains job titles",
+                reasoning: 'Contains job titles',
               };
             }
           } else if (
-            captionLower.includes("manager") &&
-            (columnName.includes("manager") ||
-              columnName.includes("supervisor"))
+            captionLower.includes('manager') &&
+            (columnName.includes('manager') || columnName.includes('supervisor'))
           ) {
             if (bestMatch.confidence < 0.8) {
               bestMatch = {
                 caption,
                 confidence: 0.8,
-                reasoning: "Contains manager information",
+                reasoning: 'Contains manager information',
               };
             }
           } else if (
-            (captionLower.includes("reference") ||
-              captionLower.includes("id")) &&
-            (columnName.includes("id") ||
-              columnName.includes("ref") ||
-              columnName.includes("reference"))
+            (captionLower.includes('reference') || captionLower.includes('id')) &&
+            (columnName.includes('id') ||
+              columnName.includes('ref') ||
+              columnName.includes('reference'))
           ) {
             if (bestMatch.confidence < 0.85) {
               bestMatch = {
                 caption,
                 confidence: 0.85,
-                reasoning: "Contains reference/ID data",
+                reasoning: 'Contains reference/ID data',
               };
             }
           } else if (
-            (captionLower.includes("org") || captionLower.includes("unit")) &&
-            (columnName.includes("org") ||
-              columnName.includes("unit") ||
-              columnName.includes("department"))
+            (captionLower.includes('org') || captionLower.includes('unit')) &&
+            (columnName.includes('org') ||
+              columnName.includes('unit') ||
+              columnName.includes('department'))
           ) {
             if (bestMatch.confidence < 0.8) {
               bestMatch = {
                 caption,
                 confidence: 0.8,
-                reasoning: "Contains organizational data",
+                reasoning: 'Contains organizational data',
               };
             }
           }
@@ -366,8 +355,8 @@ export default function DataImportMap() {
 
   const handleFileUpload = useCallback(
     async (file: File) => {
-      if (!file || !file.name.endsWith(".csv")) {
-        alert("Please select a valid CSV file");
+      if (!file || !file.name.endsWith('.csv')) {
+        alert('Please select a valid CSV file');
         return;
       }
 
@@ -379,7 +368,7 @@ export default function DataImportMap() {
         const parsedData = parseCSV(text);
 
         if (parsedData.length === 0) {
-          alert("The CSV file appears to be empty");
+          alert('The CSV file appears to be empty');
           return;
         }
 
@@ -396,21 +385,19 @@ export default function DataImportMap() {
 
           // First, reset all rows to show no CSV mapping
           updatedRows.forEach((row) => {
-            row.header = "N/A";
-            row.sample = "N/A";
+            row.header = 'N/A';
+            row.sample = 'N/A';
             row.confidence = undefined;
             row.suggested = false;
           });
 
           // Then apply suggestions to matching captions
           suggestions.forEach((suggestion) => {
-            const targetRow = updatedRows.find(
-              (row) => row.caption === suggestion.caption,
-            );
+            const targetRow = updatedRows.find((row) => row.caption === suggestion.caption);
             if (targetRow) {
               const column = columns[suggestion.columnIndex];
               targetRow.header = column.name;
-              targetRow.sample = column.sample[0] || "N/A";
+              targetRow.sample = column.sample[0] || 'N/A';
               targetRow.confidence = suggestion.confidence;
               targetRow.suggested = true;
             }
@@ -423,7 +410,7 @@ export default function DataImportMap() {
         // Add initial AI message
         const welcomeMessage: ChatMessage = {
           id: `msg-${Date.now()}`,
-          type: "assistant",
+          type: 'assistant',
           content: `Thanks! I've scanned your file "${file.name}" with ${columns.length} columns and ${parsedData.length - (hasHeader ? 1 : 0)} rows detected. Let's map it to your configured captions.`,
           timestamp: new Date(),
           suggestions,
@@ -435,17 +422,15 @@ export default function DataImportMap() {
         setTimeout(() => {
           const analysisMessage: ChatMessage = {
             id: `msg-${Date.now() + 1}`,
-            type: "assistant",
+            type: 'assistant',
             content: generateMappingAnalysis(suggestions, columns),
             timestamp: new Date(),
           };
           setChatMessages((prev) => [...prev, analysisMessage]);
         }, 1000);
       } catch (error) {
-        console.error("Error processing file:", error);
-        alert(
-          "Error processing the CSV file. Please check the format and try again.",
-        );
+        console.error('Error processing file:', error);
+        alert('Error processing the CSV file. Please check the format and try again.');
       } finally {
         setIsProcessing(false);
       }
@@ -460,8 +445,7 @@ export default function DataImportMap() {
     const configuredCaptions = mappingRows.filter((row) => row.caption).length;
     const mapped = suggestions.length;
     const unmappedCaptions = mappingRows.filter(
-      (row) =>
-        row.caption && !suggestions.find((s) => s.caption === row.caption),
+      (row) => row.caption && !suggestions.find((s) => s.caption === row.caption),
     );
     const unmappedColumns = columns.filter(
       (_, index) => !suggestions.find((s) => s.columnIndex === index),
@@ -473,10 +457,10 @@ export default function DataImportMap() {
       message += `✅ **Mapped (${mapped}):**\n`;
       suggestions.forEach((suggestion) => {
         const confidence = Math.round(suggestion.confidence * 100);
-        const icon = confidence > 80 ? "🎯" : confidence > 60 ? "⚠️" : "❓";
+        const icon = confidence > 80 ? '🎯' : confidence > 60 ? '⚠️' : '❓';
         message += `${icon} ${columns[suggestion.columnIndex].name} → ${suggestion.caption} (${confidence}%)\n`;
       });
-      message += "\n";
+      message += '\n';
     }
 
     if (unmappedCaptions.length > 0) {
@@ -484,7 +468,7 @@ export default function DataImportMap() {
       unmappedCaptions.forEach((row) => {
         message += `• ${row.caption}\n`;
       });
-      message += "\n";
+      message += '\n';
     }
 
     if (unmappedColumns.length > 0) {
@@ -492,7 +476,7 @@ export default function DataImportMap() {
       unmappedColumns.forEach((column) => {
         message += `• ${column.name}\n`;
       });
-      message += "\n";
+      message += '\n';
     }
 
     if (unmappedCaptions.length > 0 || unmappedColumns.length > 0) {
@@ -509,25 +493,21 @@ export default function DataImportMap() {
 
     const userMessage: ChatMessage = {
       id: `msg-${Date.now()}`,
-      type: "user",
+      type: 'user',
       content: currentMessage,
       timestamp: new Date(),
     };
 
     setChatMessages((prev) => [...prev, userMessage]);
-    setCurrentMessage("");
+    setCurrentMessage('');
     setIsAssistantTyping(true);
 
     // Simulate AI processing
     setTimeout(() => {
-      const response = generateAIResponse(
-        currentMessage,
-        mappingRows,
-        csvColumns,
-      );
+      const response = generateAIResponse(currentMessage, mappingRows, csvColumns);
       const assistantMessage: ChatMessage = {
         id: `msg-${Date.now()}`,
-        type: "assistant",
+        type: 'assistant',
         content: response,
         timestamp: new Date(),
       };
@@ -544,60 +524,43 @@ export default function DataImportMap() {
   ): string => {
     const input = userInput.toLowerCase();
 
-    if (
-      input.includes("help") ||
-      input.includes("what") ||
-      input.includes("how")
-    ) {
-      return "I can help you map your CSV columns to the required fields. You can:\n\n• Ask me to suggest mappings for specific columns\n• Tell me if a mapping looks wrong\n• Ask me to explain why I suggested a particular mapping\n• Request me to map unmapped columns\n\nWhat would you like me to help with?";
+    if (input.includes('help') || input.includes('what') || input.includes('how')) {
+      return 'I can help you map your CSV columns to the required fields. You can:\n\n• Ask me to suggest mappings for specific columns\n• Tell me if a mapping looks wrong\n• Ask me to explain why I suggested a particular mapping\n• Request me to map unmapped columns\n\nWhat would you like me to help with?';
     }
 
-    if (input.includes("map") || input.includes("suggest")) {
+    if (input.includes('map') || input.includes('suggest')) {
       const unmapped = currentMappings.filter((row) => !row.caption);
       if (unmapped.length > 0) {
-        return `I notice ${unmapped.length} columns still need mapping. Based on the data, here are my suggestions:\n\n${unmapped.map((row) => `• ${row.header} → I'd suggest mapping this to one of: ${availableCaptions.slice(0, 3).join(", ")}`).join("\n")}\n\nWhich would you like me to help with first?`;
+        return `I notice ${unmapped.length} columns still need mapping. Based on the data, here are my suggestions:\n\n${unmapped.map((row) => `• ${row.header} → I'd suggest mapping this to one of: ${availableCaptions.slice(0, 3).join(', ')}`).join('\n')}\n\nWhich would you like me to help with first?`;
       } else {
         return "All your columns are already mapped! The mapping looks complete. Is there anything you'd like me to review or change?";
       }
     }
 
-    if (
-      input.includes("confidence") ||
-      input.includes("sure") ||
-      input.includes("certain")
-    ) {
-      const confident = currentMappings.filter(
-        (row) => row.confidence && row.confidence > 0.8,
-      );
-      const uncertain = currentMappings.filter(
-        (row) => row.confidence && row.confidence <= 0.8,
-      );
+    if (input.includes('confidence') || input.includes('sure') || input.includes('certain')) {
+      const confident = currentMappings.filter((row) => row.confidence && row.confidence > 0.8);
+      const uncertain = currentMappings.filter((row) => row.confidence && row.confidence <= 0.8);
 
       let response = `Here's my confidence breakdown:\n\n`;
       if (confident.length > 0) {
-        response += `High confidence (80%+):\n${confident.map((row) => `• ${row.header} → ${row.caption}`).join("\n")}\n\n`;
+        response += `High confidence (80%+):\n${confident.map((row) => `• ${row.header} → ${row.caption}`).join('\n')}\n\n`;
       }
       if (uncertain.length > 0) {
-        response += `Lower confidence:\n${uncertain.map((row) => `• ${row.header} → ${row.caption} (${Math.round((row.confidence || 0) * 100)}%)`).join("\n")}\n\n`;
+        response += `Lower confidence:\n${uncertain.map((row) => `• ${row.header} → ${row.caption} (${Math.round((row.confidence || 0) * 100)}%)`).join('\n')}\n\n`;
       }
 
-      response += "Would you like me to review any of these mappings?";
+      response += 'Would you like me to review any of these mappings?';
       return response;
     }
 
     return "I understand you'd like help with the mapping. Could you be more specific? For example, you could ask me to:\n\n• 'Help map the remaining columns'\n• 'Why did you map X to Y?'\n• 'What should column Z be mapped to?'\n\nWhat would you like me to assist with?";
   };
 
-  const updateMappingRow = useCallback(
-    (rowId: string, field: string, value: any) => {
-      setMappingRows((prev) =>
-        prev.map((row) =>
-          row.id === rowId ? { ...row, [field]: value } : row,
-        ),
-      );
-    },
-    [],
-  );
+  const updateMappingRow = useCallback((rowId: string, field: string, value: any) => {
+    setMappingRows((prev) =>
+      prev.map((row) => (row.id === rowId ? { ...row, [field]: value } : row)),
+    );
+  }, []);
 
   const removeMappingRow = useCallback((rowId: string) => {
     setMappingRows((prev) => prev.filter((row) => row.id !== rowId));
@@ -607,18 +570,16 @@ export default function DataImportMap() {
     const newRow: MappingRow = {
       id: `row-${Date.now()}`,
       order: mappingRows.length,
-      header: "N/A",
-      sample: "N/A",
-      caption: "",
+      header: 'N/A',
+      sample: 'N/A',
+      caption: '',
       keyField: false,
       matchById: false,
     };
     setMappingRows((prev) => [...prev, newRow]);
   }, [mappingRows.length]);
 
-  const handleFileInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       handleFileUpload(file);
@@ -630,11 +591,11 @@ export default function DataImportMap() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex">
+    <div className="flex min-h-screen bg-gray-100">
       {/* Navigation Sidebar */}
-      <div className="w-[100px] bg-[#00336E] flex flex-col items-center py-6">
+      <div className="flex w-[100px] flex-col items-center bg-[#00336E] py-6">
         {/* Logo */}
-        <div className="w-[76px] h-[38px] mb-8">
+        <div className="mb-8 h-[38px] w-[76px]">
           <svg
             width="76"
             height="38"
@@ -646,10 +607,7 @@ export default function DataImportMap() {
               d="M68.9658 6.15814C70.2996 6.15814 71.3809 5.07013 71.3809 3.728C71.3809 2.38587 70.2996 1.29785 68.9658 1.29785C67.632 1.29785 66.5508 2.38587 66.5508 3.728C66.5508 5.07013 67.632 6.15814 68.9658 6.15814Z"
               fill="white"
             />
-            <path
-              d="M60.5454 7.62207H55.6641V34.6076H60.5454V7.62207Z"
-              fill="white"
-            />
+            <path d="M60.5454 7.62207H55.6641V34.6076H60.5454V7.62207Z" fill="white" />
             <path
               d="M45.1471 12.0374H41.2344V7.56543H53.9411V12.0374H50.0284V34.551H45.1471V12.0374Z"
               fill="white"
@@ -676,29 +634,27 @@ export default function DataImportMap() {
         {/* Navigation Items */}
         <div className="flex flex-col gap-4">
           {[
-            { icon: "🏠", label: "Home", active: true },
-            { icon: "📁", label: "Modules" },
-            { icon: "✓", label: "Tasks" },
-            { icon: "👥", label: "Portal\nQueue" },
-            { icon: "📄", label: "Files" },
-            { icon: "👁", label: "Insights" },
-            { icon: "📊", label: "Reports" },
+            { icon: '🏠', label: 'Home', active: true },
+            { icon: '📁', label: 'Modules' },
+            { icon: '✓', label: 'Tasks' },
+            { icon: '👥', label: 'Portal\nQueue' },
+            { icon: '📄', label: 'Files' },
+            { icon: '👁', label: 'Insights' },
+            { icon: '📊', label: 'Reports' },
           ].map((item, index) => (
             <div
               key={index}
-              className={`flex flex-col items-center p-3 rounded ${item.active ? "bg-[#00336E]" : ""}`}
+              className={`flex flex-col items-center rounded p-3 ${item.active ? 'bg-[#00336E]' : ''}`}
             >
-              <div className="text-white text-xl mb-1">{item.icon}</div>
-              <div className="text-white text-xs text-center leading-tight">
-                {item.label}
-              </div>
+              <div className="mb-1 text-xl text-white">{item.icon}</div>
+              <div className="text-center text-xs leading-tight text-white">{item.label}</div>
             </div>
           ))}
         </div>
 
         {/* Evotix Core Logo */}
         <div className="mt-auto">
-          <div className="text-white text-xs text-center opacity-70">
+          <div className="text-center text-xs text-white opacity-70">
             <div className="font-bold">EVOTIX</div>
             <div className="text-[10px]">Core</div>
           </div>
@@ -706,15 +662,15 @@ export default function DataImportMap() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex flex-1 flex-col">
         {/* Top Menu */}
-        <div className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
+        <div className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-3">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-sm">
-            <span className="text-blue-600 font-medium">Home</span>
-            <ChevronDown className="h-4 w-4 text-gray-400 rotate-[-90deg]" />
-            <span className="text-blue-600 font-medium">Data Import Map</span>
-            <ChevronDown className="h-4 w-4 text-gray-400 rotate-[-90deg]" />
+            <span className="font-medium text-blue-600">Home</span>
+            <ChevronDown className="h-4 w-4 rotate-[-90deg] text-gray-400" />
+            <span className="font-medium text-blue-600">Data Import Map</span>
+            <ChevronDown className="h-4 w-4 rotate-[-90deg] text-gray-400" />
             <span className="text-gray-600">Edit</span>
           </div>
 
@@ -722,35 +678,29 @@ export default function DataImportMap() {
           <div className="flex items-center gap-6">
             {/* Org Unit */}
             <div className="flex items-center gap-2">
-              <div className="text-gray-600 text-sm">Org Unit</div>
-              <div className="text-blue-600 font-semibold text-sm">
-                East Kilbride
-              </div>
+              <div className="text-sm text-gray-600">Org Unit</div>
+              <div className="text-sm font-semibold text-blue-600">East Kilbride</div>
             </div>
 
             {/* User Menu */}
             <div className="flex items-center gap-2">
-              <div className="text-gray-600 font-semibold text-sm">
-                Michael Scott
-              </div>
+              <div className="text-sm font-semibold text-gray-600">Michael Scott</div>
               <ChevronDown className="h-4 w-4 text-gray-600" />
             </div>
 
             {/* Settings */}
             <div className="flex items-center gap-2">
               <Settings className="h-5 w-5 text-gray-600" />
-              <span className="text-gray-600 font-semibold text-sm">
-                Settings
-              </span>
+              <span className="text-sm font-semibold text-gray-600">Settings</span>
               <ChevronDown className="h-4 w-4 text-gray-600" />
             </div>
 
             {/* Help */}
             <div className="flex items-center gap-2">
-              <div className="w-5 h-5 rounded-full border-2 border-gray-600 flex items-center justify-center">
-                <span className="text-gray-600 text-xs font-bold">?</span>
+              <div className="flex h-5 w-5 items-center justify-center rounded-full border-2 border-gray-600">
+                <span className="text-xs font-bold text-gray-600">?</span>
               </div>
-              <span className="text-gray-600 font-semibold text-sm">Help</span>
+              <span className="text-sm font-semibold text-gray-600">Help</span>
               <ChevronDown className="h-4 w-4 text-gray-600" />
             </div>
           </div>
@@ -759,18 +709,13 @@ export default function DataImportMap() {
         {/* Page Content */}
         <div className="flex-1 p-6">
           <div className="max-w-[988px]">
-            <div className="bg-white p-10 rounded">
+            <div className="rounded bg-white p-10">
               {/* Details Section */}
               <Card className="mb-10">
                 <div className="relative">
-                  <div className="absolute -top-3 left-4 bg-white px-2 flex items-center gap-2">
+                  <div className="absolute -top-3 left-4 flex items-center gap-2 bg-white px-2">
                     <div className="text-blue-600">
-                      <svg
-                        width="20"
-                        height="14"
-                        viewBox="0 0 20 14"
-                        fill="none"
-                      >
+                      <svg width="20" height="14" viewBox="0 0 20 14" fill="none">
                         <rect
                           width="14"
                           height="5"
@@ -787,42 +732,36 @@ export default function DataImportMap() {
                         />
                       </svg>
                     </div>
-                    <span className="font-medium text-lg text-gray-800">
-                      Details
-                    </span>
+                    <span className="text-lg font-medium text-gray-800">Details</span>
                   </div>
-                  <CardContent className="pt-8 space-y-6">
+                  <CardContent className="space-y-6 pt-8">
                     {/* Type of Import */}
                     <div className="flex items-start gap-10">
                       <div className="w-[336px]">
-                        <div className="flex items-center gap-2 mb-3">
-                          <span className="font-bold text-gray-700">
-                            Type of Import
-                          </span>
-                          <span className="text-red-600 text-xl font-bold">
-                            *
-                          </span>
+                        <div className="mb-3 flex items-center gap-2">
+                          <span className="font-bold text-gray-700">Type of Import</span>
+                          <span className="text-xl font-bold text-red-600">*</span>
                         </div>
                       </div>
                       <div className="space-y-3">
-                        <label className="flex items-center gap-2 cursor-pointer">
+                        <label className="flex cursor-pointer items-center gap-2">
                           <div
-                            className="w-6 h-6 rounded-full border-2 border-blue-600 flex items-center justify-center cursor-pointer"
-                            onClick={() => setImportType("module")}
+                            className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 border-blue-600"
+                            onClick={() => setImportType('module')}
                           >
-                            {importType === "module" && (
-                              <div className="w-4 h-4 rounded-full bg-blue-600" />
+                            {importType === 'module' && (
+                              <div className="h-4 w-4 rounded-full bg-blue-600" />
                             )}
                           </div>
                           <span className="text-gray-700">Module</span>
                         </label>
-                        <label className="flex items-center gap-2 cursor-pointer">
+                        <label className="flex cursor-pointer items-center gap-2">
                           <div
-                            className="w-6 h-6 rounded-full border-2 border-blue-600 flex items-center justify-center cursor-pointer"
-                            onClick={() => setImportType("user")}
+                            className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 border-blue-600"
+                            onClick={() => setImportType('user')}
                           >
-                            {importType === "user" && (
-                              <div className="w-4 h-4 rounded-full bg-blue-600" />
+                            {importType === 'user' && (
+                              <div className="h-4 w-4 rounded-full bg-blue-600" />
                             )}
                           </div>
                           <span className="text-gray-700">User</span>
@@ -836,10 +775,10 @@ export default function DataImportMap() {
                         <span className="font-bold text-gray-700">Module</span>
                       </div>
                       <div className="flex items-center gap-2">
-                        <div className="w-[280px] h-9 px-2 border border-gray-300 rounded bg-gray-100 flex items-center">
+                        <div className="flex h-9 w-[280px] items-center rounded border border-gray-300 bg-gray-100 px-2">
                           <span className="text-gray-700">Person Register</span>
                         </div>
-                        <Button className="h-9 px-3 border-3 border-blue-600 bg-transparent text-blue-600">
+                        <Button className="border-3 h-9 border-blue-600 bg-transparent px-3 text-blue-600">
                           <Settings className="h-5 w-5" />
                           <ChevronDown className="h-5 w-5" />
                         </Button>
@@ -851,29 +790,25 @@ export default function DataImportMap() {
                       <div className="w-[336px]">
                         <div className="flex items-center gap-2">
                           <span className="font-bold text-gray-700">Title</span>
-                          <span className="text-red-600 text-xl font-bold">
-                            *
-                          </span>
+                          <span className="text-xl font-bold text-red-600">*</span>
                         </div>
                       </div>
                       <Input
                         value={title}
                         onChange={(e) => setTitle(e.target.value)}
-                        className="w-[280px] h-9"
+                        className="h-9 w-[280px]"
                       />
                     </div>
 
                     {/* Description */}
                     <div className="flex items-start gap-10">
                       <div className="w-[336px]">
-                        <span className="font-bold text-gray-700">
-                          Description
-                        </span>
+                        <span className="font-bold text-gray-700">Description</span>
                       </div>
                       <textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        className="w-[303px] h-[120px] p-2 border border-gray-300 rounded resize-none"
+                        className="h-[120px] w-[303px] resize-none rounded border border-gray-300 p-2"
                       />
                     </div>
                   </CardContent>
@@ -882,51 +817,49 @@ export default function DataImportMap() {
 
               {/* File Format Details */}
               <div className="mb-6">
-                <h3 className="font-bold text-lg text-gray-700 mb-6">
-                  File Format Details
-                </h3>
+                <h3 className="mb-6 text-lg font-bold text-gray-700">File Format Details</h3>
 
                 {/* Has Header */}
-                <div className="flex items-start gap-10 mb-6">
+                <div className="mb-6 flex items-start gap-10">
                   <div className="w-[336px]">
                     <span className="font-bold text-gray-700">Has Header</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <Checkbox
                       checked={hasHeader}
-                      onCheckedChange={setHasHeader}
-                      className="w-5 h-5"
+                      onCheckedChange={(checked) => setHasHeader(checked === true)}
+                      className="h-5 w-5"
                     />
                   </div>
                 </div>
 
                 {/* Delimiter */}
-                <div className="flex items-start gap-10 mb-6">
+                <div className="mb-6 flex items-start gap-10">
                   <div className="w-[336px]">
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-gray-700">Delimiter</span>
-                      <span className="text-red-600 text-xl font-bold">*</span>
+                      <span className="text-xl font-bold text-red-600">*</span>
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex cursor-pointer items-center gap-2">
                       <div
-                        className="w-6 h-6 rounded-full border-2 border-blue-600 flex items-center justify-center cursor-pointer"
-                        onClick={() => setDelimiter("comma")}
+                        className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 border-blue-600"
+                        onClick={() => setDelimiter('comma')}
                       >
-                        {delimiter === "comma" && (
-                          <div className="w-4 h-4 rounded-full bg-blue-600" />
+                        {delimiter === 'comma' && (
+                          <div className="h-4 w-4 rounded-full bg-blue-600" />
                         )}
                       </div>
                       <span className="text-gray-700">Comma</span>
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex cursor-pointer items-center gap-2">
                       <div
-                        className="w-6 h-6 rounded-full border-2 border-blue-600 flex items-center justify-center cursor-pointer"
-                        onClick={() => setDelimiter("tab")}
+                        className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 border-blue-600"
+                        onClick={() => setDelimiter('tab')}
                       >
-                        {delimiter === "tab" && (
-                          <div className="w-4 h-4 rounded-full bg-blue-600" />
+                        {delimiter === 'tab' && (
+                          <div className="h-4 w-4 rounded-full bg-blue-600" />
                         )}
                       </div>
                       <span className="text-gray-700">Tab</span>
@@ -935,45 +868,43 @@ export default function DataImportMap() {
                 </div>
 
                 {/* Import Type */}
-                <div className="flex items-start gap-10 mb-6">
+                <div className="mb-6 flex items-start gap-10">
                   <div className="w-[336px]">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-gray-700">
-                        Import Type
-                      </span>
-                      <span className="text-red-600 text-xl font-bold">*</span>
+                      <span className="font-bold text-gray-700">Import Type</span>
+                      <span className="text-xl font-bold text-red-600">*</span>
                     </div>
                   </div>
                   <div className="space-y-3">
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex cursor-pointer items-center gap-2">
                       <div
-                        className="w-6 h-6 rounded-full border-2 border-blue-600 flex items-center justify-center cursor-pointer"
-                        onClick={() => setOperationType("insert-update")}
+                        className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 border-blue-600"
+                        onClick={() => setOperationType('insert-update')}
                       >
-                        {operationType === "insert-update" && (
-                          <div className="w-4 h-4 rounded-full bg-blue-600" />
+                        {operationType === 'insert-update' && (
+                          <div className="h-4 w-4 rounded-full bg-blue-600" />
                         )}
                       </div>
                       <span className="text-gray-700">Insert and Update</span>
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex cursor-pointer items-center gap-2">
                       <div
-                        className="w-6 h-6 rounded-full border-2 border-blue-600 flex items-center justify-center cursor-pointer"
-                        onClick={() => setOperationType("insert")}
+                        className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 border-blue-600"
+                        onClick={() => setOperationType('insert')}
                       >
-                        {operationType === "insert" && (
-                          <div className="w-4 h-4 rounded-full bg-blue-600" />
+                        {operationType === 'insert' && (
+                          <div className="h-4 w-4 rounded-full bg-blue-600" />
                         )}
                       </div>
                       <span className="text-gray-700">Insert</span>
                     </label>
-                    <label className="flex items-center gap-2 cursor-pointer">
+                    <label className="flex cursor-pointer items-center gap-2">
                       <div
-                        className="w-6 h-6 rounded-full border-2 border-blue-600 flex items-center justify-center cursor-pointer"
-                        onClick={() => setOperationType("update")}
+                        className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full border-2 border-blue-600"
+                        onClick={() => setOperationType('update')}
                       >
-                        {operationType === "update" && (
-                          <div className="w-4 h-4 rounded-full bg-blue-600" />
+                        {operationType === 'update' && (
+                          <div className="h-4 w-4 rounded-full bg-blue-600" />
                         )}
                       </div>
                       <span className="text-gray-700">Update</span>
@@ -982,12 +913,12 @@ export default function DataImportMap() {
                 </div>
 
                 {/* Date Format */}
-                <div className="flex items-start gap-10 mb-6">
+                <div className="mb-6 flex items-start gap-10">
                   <div className="w-[336px]">
                     <span className="font-bold text-gray-700">Date Format</span>
                   </div>
                   <Select value={dateFormat} onValueChange={setDateFormat}>
-                    <SelectTrigger className="w-[280px] h-9">
+                    <SelectTrigger className="h-9 w-[280px]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1000,37 +931,37 @@ export default function DataImportMap() {
               </div>
 
               {/* Warning Banner */}
-              <div className="bg-yellow-50 border border-yellow-200 rounded p-4 flex items-center gap-4 mb-6">
+              <div className="mb-6 flex items-center gap-4 rounded border border-yellow-200 bg-yellow-50 p-4">
                 <AlertTriangle className="h-8 w-8 text-yellow-600" />
                 <span className="text-yellow-800">
-                  All required fields (indicated with *) must be mapped. Record
-                  fields must be matched by ID.
+                  All required fields (indicated with *) must be mapped. Record fields must be
+                  matched by ID.
                 </span>
               </div>
 
               {/* Data Table - Always show */}
               {
-                <div className="border border-gray-300 rounded overflow-hidden mb-6">
+                <div className="mb-6 overflow-hidden rounded border border-gray-300">
                   <table className="w-full">
                     <thead>
                       <tr className="bg-gray-50">
-                        <th className="w-12 p-2 border-r border-gray-300"></th>
-                        <th className="w-16 p-2 border-r border-gray-300 text-left text-sm font-medium text-gray-700">
+                        <th className="w-12 border-r border-gray-300 p-2"></th>
+                        <th className="w-16 border-r border-gray-300 p-2 text-left text-sm font-medium text-gray-700">
                           Order
                         </th>
-                        <th className="w-20 p-2 border-r border-gray-300 text-left text-sm font-medium text-gray-700">
+                        <th className="w-20 border-r border-gray-300 p-2 text-left text-sm font-medium text-gray-700">
                           Header
                         </th>
-                        <th className="w-24 p-2 border-r border-gray-300 text-left text-sm font-medium text-gray-700">
+                        <th className="w-24 border-r border-gray-300 p-2 text-left text-sm font-medium text-gray-700">
                           Sample Data
                         </th>
-                        <th className="w-60 p-2 border-r border-gray-300 text-left text-sm font-medium text-gray-700">
+                        <th className="w-60 border-r border-gray-300 p-2 text-left text-sm font-medium text-gray-700">
                           Caption
                         </th>
-                        <th className="w-20 p-2 border-r border-gray-300 text-left text-sm font-medium text-gray-700">
+                        <th className="w-20 border-r border-gray-300 p-2 text-left text-sm font-medium text-gray-700">
                           Key Field
                         </th>
-                        <th className="w-24 p-2 border-r border-gray-300 text-left text-sm font-medium text-gray-700">
+                        <th className="w-24 border-r border-gray-300 p-2 text-left text-sm font-medium text-gray-700">
                           Match By ID
                         </th>
                         <th className="w-28 p-2 text-left text-sm font-medium text-gray-700"></th>
@@ -1039,33 +970,31 @@ export default function DataImportMap() {
                     <tbody>
                       {mappingRows.map((row, index) => (
                         <tr key={row.id} className="border-t border-gray-300">
-                          <td className="p-2 border-r border-gray-300 text-center">
+                          <td className="border-r border-gray-300 p-2 text-center">
                             <div className="flex flex-col gap-1">
-                              <div className="w-5 h-1 bg-gray-600"></div>
-                              <div className="w-5 h-1 bg-gray-600"></div>
-                              <div className="w-5 h-1 bg-gray-600"></div>
+                              <div className="h-1 w-5 bg-gray-600"></div>
+                              <div className="h-1 w-5 bg-gray-600"></div>
+                              <div className="h-1 w-5 bg-gray-600"></div>
                             </div>
                           </td>
-                          <td className="p-2 border-r border-gray-300 text-sm text-gray-800">
+                          <td className="border-r border-gray-300 p-2 text-sm text-gray-800">
                             {row.order}
                           </td>
-                          <td className="p-2 border-r border-gray-300 text-sm text-gray-800 relative">
+                          <td className="relative border-r border-gray-300 p-2 text-sm text-gray-800">
                             {row.header}
                             {row.suggested && (
-                              <CheckCircle className="h-4 w-4 text-green-500 absolute top-2 right-2" />
+                              <CheckCircle className="absolute right-2 top-2 h-4 w-4 text-green-500" />
                             )}
                           </td>
-                          <td className="p-2 border-r border-gray-300 text-sm text-gray-800">
+                          <td className="border-r border-gray-300 p-2 text-sm text-gray-800">
                             {row.sample}
                           </td>
-                          <td className="p-2 border-r border-gray-300">
+                          <td className="border-r border-gray-300 p-2">
                             <Select
                               value={row.caption}
-                              onValueChange={(value) =>
-                                updateMappingRow(row.id, "caption", value)
-                              }
+                              onValueChange={(value) => updateMappingRow(row.id, 'caption', value)}
                             >
-                              <SelectTrigger className="w-full h-8 text-sm">
+                              <SelectTrigger className="h-8 w-full text-sm">
                                 <SelectValue placeholder="Select caption..." />
                               </SelectTrigger>
                               <SelectContent>
@@ -1077,32 +1006,32 @@ export default function DataImportMap() {
                               </SelectContent>
                             </Select>
                           </td>
-                          <td className="p-2 border-r border-gray-300 text-center">
+                          <td className="border-r border-gray-300 p-2 text-center">
                             <Checkbox
                               checked={row.keyField}
                               onCheckedChange={(checked) =>
-                                updateMappingRow(row.id, "keyField", checked)
+                                updateMappingRow(row.id, 'keyField', checked)
                               }
-                              className="w-5 h-5"
+                              className="h-5 w-5"
                             />
                           </td>
-                          <td className="p-2 border-r border-gray-300 text-center">
+                          <td className="border-r border-gray-300 p-2 text-center">
                             <Checkbox
                               checked={row.matchById}
                               onCheckedChange={(checked) =>
-                                updateMappingRow(row.id, "matchById", checked)
+                                updateMappingRow(row.id, 'matchById', checked)
                               }
-                              className="w-5 h-5"
+                              className="h-5 w-5"
                             />
                           </td>
                           <td className="p-2 text-center">
                             <Button
                               variant="destructive"
                               size="sm"
-                              className="h-8 px-3 bg-red-600 hover:bg-red-700"
+                              className="h-8 bg-red-600 px-3 hover:bg-red-700"
                               onClick={() => removeMappingRow(row.id)}
                             >
-                              <X className="h-4 w-4 mr-1" />
+                              <X className="mr-1 h-4 w-4" />
                               Remove
                             </Button>
                           </td>
@@ -1114,31 +1043,21 @@ export default function DataImportMap() {
               }
 
               {/* Add Button - Always show */}
-              <Button
-                className="mb-6 bg-blue-600 hover:bg-blue-700"
-                onClick={addMappingRow}
-              >
-                <span className="text-xl mr-2">+</span>
+              <Button className="mb-6 bg-blue-600 hover:bg-blue-700" onClick={addMappingRow}>
+                <span className="mr-2 text-xl">+</span>
                 Add
               </Button>
 
-              <div className="w-full h-px bg-gray-300 mb-6"></div>
+              <div className="mb-6 h-px w-full bg-gray-300"></div>
 
               {/* Data Mapping Assistant */}
               <div className="mb-6">
-                <h3 className="font-bold text-lg text-gray-700 mb-6">
-                  Data Mapping Assistant
-                </h3>
+                <h3 className="mb-6 text-lg font-bold text-gray-700">Data Mapping Assistant</h3>
 
                 {!isFileUploaded ? (
-                  <div className="flex flex-col items-center py-12 gap-6">
+                  <div className="flex flex-col items-center gap-6 py-12">
                     <div className="w-25 h-25 text-gray-400">
-                      <svg
-                        width="100"
-                        height="100"
-                        viewBox="0 0 100 100"
-                        fill="none"
-                      >
+                      <svg width="100" height="100" viewBox="0 0 100 100" fill="none">
                         <circle
                           cx="50"
                           cy="50"
@@ -1147,12 +1066,7 @@ export default function DataImportMap() {
                           stroke="#778088"
                           strokeWidth="2"
                         />
-                        <path
-                          d="M25 35h50v40H25z"
-                          fill="white"
-                          stroke="#778088"
-                          strokeWidth="2"
-                        />
+                        <path d="M25 35h50v40H25z" fill="white" stroke="#778088" strokeWidth="2" />
                         <path
                           d="M40 25h20v15H40z"
                           fill="#E8E9ED"
@@ -1167,28 +1081,16 @@ export default function DataImportMap() {
                           stroke="#778088"
                           strokeWidth="2"
                         />
-                        <path
-                          d="M25 65h10v10H25z"
-                          fill="white"
-                          stroke="#778088"
-                          strokeWidth="2"
-                        />
-                        <path
-                          d="M32 62v6M29 65h6"
-                          stroke="#778088"
-                          strokeWidth="2"
-                        />
+                        <path d="M25 65h10v10H25z" fill="white" stroke="#778088" strokeWidth="2" />
+                        <path d="M32 62v6M29 65h6" stroke="#778088" strokeWidth="2" />
                       </svg>
                     </div>
 
-                    <div className="text-center space-y-3">
-                      <h4 className="font-bold text-gray-800">
-                        Upload Your CSV Data
-                      </h4>
-                      <p className="text-sm text-gray-600 max-w-[296px]">
-                        Upload your CSV file and I'll help map the columns to
-                        your configured captions above. The AI assistant will
-                        suggest the best matches.
+                    <div className="space-y-3 text-center">
+                      <h4 className="font-bold text-gray-800">Upload Your CSV Data</h4>
+                      <p className="max-w-[296px] text-sm text-gray-600">
+                        Upload your CSV file and I'll help map the columns to your configured
+                        captions above. The AI assistant will suggest the best matches.
                       </p>
                     </div>
 
@@ -1197,8 +1099,8 @@ export default function DataImportMap() {
                       onClick={handleUploadClick}
                       disabled={isProcessing}
                     >
-                      <Upload className="h-4 w-4 mr-2" />
-                      {isProcessing ? "Processing..." : "Upload File"}
+                      <Upload className="mr-2 h-4 w-4" />
+                      {isProcessing ? 'Processing...' : 'Upload File'}
                     </Button>
 
                     <input
@@ -1210,55 +1112,50 @@ export default function DataImportMap() {
                     />
                   </div>
                 ) : (
-                  <div className="border border-gray-300 rounded-lg p-4">
+                  <div className="rounded-lg border border-gray-300 p-4">
                     {/* File Info */}
-                    <div className="flex items-center gap-3 mb-4 p-3 bg-green-50 border border-green-200 rounded">
+                    <div className="mb-4 flex items-center gap-3 rounded border border-green-200 bg-green-50 p-3">
                       <FileText className="h-5 w-5 text-green-600" />
-                      <span className="text-green-800 font-medium">
-                        {fileName}
-                      </span>
-                      <span className="text-green-600 text-sm">
-                        ({csvColumns.length} columns,{" "}
-                        {csvData.length - (hasHeader ? 1 : 0)} rows)
+                      <span className="font-medium text-green-800">{fileName}</span>
+                      <span className="text-sm text-green-600">
+                        ({csvColumns.length} columns, {csvData.length - (hasHeader ? 1 : 0)} rows)
                       </span>
                     </div>
 
                     {/* Chat Interface */}
                     <div className="space-y-4">
                       {/* Messages */}
-                      <div className="max-h-64 overflow-y-auto space-y-3 p-3 bg-gray-50 rounded">
+                      <div className="max-h-64 space-y-3 overflow-y-auto rounded bg-gray-50 p-3">
                         {chatMessages.map((message) => (
                           <div
                             key={message.id}
-                            className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
+                            className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                           >
                             <div
-                              className={`max-w-[80%] p-3 rounded-lg ${
-                                message.type === "user"
-                                  ? "bg-blue-600 text-white"
-                                  : "bg-white border border-gray-200 text-gray-800"
+                              className={`max-w-[80%] rounded-lg p-3 ${
+                                message.type === 'user'
+                                  ? 'bg-blue-600 text-white'
+                                  : 'border border-gray-200 bg-white text-gray-800'
                               }`}
                             >
-                              <div className="whitespace-pre-wrap">
-                                {message.content}
-                              </div>
+                              <div className="whitespace-pre-wrap">{message.content}</div>
                             </div>
                           </div>
                         ))}
 
                         {isAssistantTyping && (
                           <div className="flex justify-start">
-                            <div className="bg-white border border-gray-200 text-gray-800 p-3 rounded-lg">
+                            <div className="rounded-lg border border-gray-200 bg-white p-3 text-gray-800">
                               <div className="flex items-center gap-2">
                                 <div className="flex gap-1">
-                                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                                  <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400"></div>
                                   <div
-                                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                                    style={{ animationDelay: "0.1s" }}
+                                    className="h-2 w-2 animate-bounce rounded-full bg-gray-400"
+                                    style={{ animationDelay: '0.1s' }}
                                   ></div>
                                   <div
-                                    className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                                    style={{ animationDelay: "0.2s" }}
+                                    className="h-2 w-2 animate-bounce rounded-full bg-gray-400"
+                                    style={{ animationDelay: '0.2s' }}
                                   ></div>
                                 </div>
                                 <span className="text-sm text-gray-600">
@@ -1277,9 +1174,7 @@ export default function DataImportMap() {
                           onChange={(e) => setCurrentMessage(e.target.value)}
                           placeholder="Type here to speak to the assistant"
                           className="flex-1"
-                          onKeyPress={(e) =>
-                            e.key === "Enter" && handleSendMessage()
-                          }
+                          onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                         />
                         <Button
                           onClick={handleSendMessage}
