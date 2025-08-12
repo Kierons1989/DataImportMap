@@ -62,8 +62,16 @@ export default function DataImportMap() {
   const [isFileUploaded, setIsFileUploaded] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   
-  // Mapping state
-  const [mappingRows, setMappingRows] = useState<MappingRow[]>([]);
+  // Mapping state - Initialize with predefined captions
+  const [mappingRows, setMappingRows] = useState<MappingRow[]>([
+    { id: 'row-0', order: 0, header: 'N/A', sample: 'N/A', caption: 'Reference', keyField: true, matchById: true },
+    { id: 'row-1', order: 1, header: 'N/A', sample: 'N/A', caption: 'Org Unit', keyField: false, matchById: false },
+    { id: 'row-2', order: 2, header: 'N/A', sample: 'N/A', caption: 'Forename(s)', keyField: false, matchById: false },
+    { id: 'row-3', order: 3, header: 'N/A', sample: 'N/A', caption: 'Surname', keyField: false, matchById: false },
+    { id: 'row-4', order: 4, header: 'N/A', sample: 'N/A', caption: 'Email', keyField: false, matchById: false },
+    { id: 'row-5', order: 5, header: 'N/A', sample: 'N/A', caption: 'Job Title', keyField: false, matchById: false },
+    { id: 'row-6', order: 6, header: 'N/A', sample: 'N/A', caption: 'Manager Name', keyField: false, matchById: false },
+  ]);
   
   // AI Assistant state
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
@@ -134,32 +142,57 @@ export default function DataImportMap() {
 
   const generateAIMapping = useCallback((columns: CSVColumn[]): MappingSuggestion[] => {
     const suggestions: MappingSuggestion[] = [];
-    
+    const existingCaptions = mappingRows.map(row => row.caption).filter(Boolean);
+
     columns.forEach((column, index) => {
       const columnName = column.name.toLowerCase();
       const sampleData = column.sample.join(' ').toLowerCase();
-      
+
       let bestMatch = { caption: '', confidence: 0, reasoning: '' };
-      
-      // Smart matching logic
-      if (columnName.includes('first') || columnName.includes('forename') || sampleData.match(/^[a-z]+$/i)) {
-        if (column.sample.some(s => s.length > 0 && s.length < 20)) {
-          bestMatch = { caption: 'Forename(s)', confidence: 0.9, reasoning: 'Contains first names' };
+
+      // Smart matching logic against existing captions
+      for (const caption of existingCaptions) {
+        const captionLower = caption.toLowerCase();
+
+        if ((captionLower.includes('forename') || captionLower.includes('first')) &&
+            (columnName.includes('first') || columnName.includes('forename') ||
+             (column.type === 'text' && column.sample.some(s => s.length > 0 && s.length < 20)))) {
+          if (bestMatch.confidence < 0.9) {
+            bestMatch = { caption, confidence: 0.9, reasoning: 'Contains first names' };
+          }
+        } else if ((captionLower.includes('surname') || captionLower.includes('last')) &&
+                   (columnName.includes('last') || columnName.includes('surname') || columnName.includes('family'))) {
+          if (bestMatch.confidence < 0.9) {
+            bestMatch = { caption, confidence: 0.9, reasoning: 'Contains surnames' };
+          }
+        } else if (captionLower.includes('email') &&
+                   (columnName.includes('email') || column.type === 'email')) {
+          if (bestMatch.confidence < 0.95) {
+            bestMatch = { caption, confidence: 0.95, reasoning: 'Contains email addresses' };
+          }
+        } else if ((captionLower.includes('title') || captionLower.includes('job')) &&
+                   (columnName.includes('title') || columnName.includes('job') || columnName.includes('position'))) {
+          if (bestMatch.confidence < 0.8) {
+            bestMatch = { caption, confidence: 0.8, reasoning: 'Contains job titles' };
+          }
+        } else if (captionLower.includes('manager') &&
+                   (columnName.includes('manager') || columnName.includes('supervisor'))) {
+          if (bestMatch.confidence < 0.8) {
+            bestMatch = { caption, confidence: 0.8, reasoning: 'Contains manager information' };
+          }
+        } else if ((captionLower.includes('reference') || captionLower.includes('id')) &&
+                   (columnName.includes('id') || columnName.includes('ref') || columnName.includes('reference'))) {
+          if (bestMatch.confidence < 0.85) {
+            bestMatch = { caption, confidence: 0.85, reasoning: 'Contains reference/ID data' };
+          }
+        } else if ((captionLower.includes('org') || captionLower.includes('unit')) &&
+                   (columnName.includes('org') || columnName.includes('unit') || columnName.includes('department'))) {
+          if (bestMatch.confidence < 0.8) {
+            bestMatch = { caption, confidence: 0.8, reasoning: 'Contains organizational data' };
+          }
         }
-      } else if (columnName.includes('last') || columnName.includes('surname') || columnName.includes('family')) {
-        bestMatch = { caption: 'Surname', confidence: 0.9, reasoning: 'Contains surnames' };
-      } else if (columnName.includes('email') || column.type === 'email') {
-        bestMatch = { caption: 'Email', confidence: 0.95, reasoning: 'Contains email addresses' };
-      } else if (columnName.includes('title') || columnName.includes('job') || columnName.includes('position')) {
-        bestMatch = { caption: 'Job Title', confidence: 0.8, reasoning: 'Contains job titles' };
-      } else if (columnName.includes('manager') || columnName.includes('supervisor')) {
-        bestMatch = { caption: 'Manager Name', confidence: 0.8, reasoning: 'Contains manager information' };
-      } else if (columnName.includes('id') || columnName.includes('ref') || columnName.includes('reference')) {
-        bestMatch = { caption: 'Reference', confidence: 0.85, reasoning: 'Contains reference/ID data' };
-      } else if (columnName.includes('org') || columnName.includes('unit') || columnName.includes('department')) {
-        bestMatch = { caption: 'Org Unit', confidence: 0.8, reasoning: 'Contains organizational data' };
       }
-      
+
       if (bestMatch.confidence > 0.5) {
         suggestions.push({
           columnIndex: index,
@@ -169,9 +202,9 @@ export default function DataImportMap() {
         });
       }
     });
-    
+
     return suggestions;
-  }, []);
+  }, [mappingRows]);
 
   const handleFileUpload = useCallback(async (file: File) => {
     if (!file || !file.name.endsWith('.csv')) {
@@ -197,35 +230,44 @@ export default function DataImportMap() {
       
       // Generate AI mapping suggestions
       const suggestions = generateAIMapping(columns);
-      
-      // Create initial mapping rows
-      const newMappingRows: MappingRow[] = columns.map((column, index) => {
-        const suggestion = suggestions.find(s => s.columnIndex === index);
-        return {
-          id: `row-${index}`,
-          order: index,
-          header: column.name,
-          sample: column.sample[0] || 'N/A',
-          caption: suggestion?.caption || '',
-          keyField: suggestion?.caption === 'Reference',
-          matchById: suggestion?.caption === 'Reference',
-          confidence: suggestion?.confidence,
-          suggested: !!suggestion
-        };
+
+      // Update existing mapping rows with CSV data
+      setMappingRows(prev => {
+        const updatedRows = [...prev];
+
+        // First, reset all rows to show no CSV mapping
+        updatedRows.forEach(row => {
+          row.header = 'N/A';
+          row.sample = 'N/A';
+          row.confidence = undefined;
+          row.suggested = false;
+        });
+
+        // Then apply suggestions to matching captions
+        suggestions.forEach(suggestion => {
+          const targetRow = updatedRows.find(row => row.caption === suggestion.caption);
+          if (targetRow) {
+            const column = columns[suggestion.columnIndex];
+            targetRow.header = column.name;
+            targetRow.sample = column.sample[0] || 'N/A';
+            targetRow.confidence = suggestion.confidence;
+            targetRow.suggested = true;
+          }
+        });
+
+        return updatedRows;
       });
-      
-      setMappingRows(newMappingRows);
       setIsFileUploaded(true);
       
       // Add initial AI message
       const welcomeMessage: ChatMessage = {
         id: `msg-${Date.now()}`,
         type: 'assistant',
-        content: `Thanks! I've scanned your file "${file.name}" with ${columns.length} columns and ${parsedData.length - (hasHeader ? 1 : 0)} rows detected. Let's map it to your configured fields.`,
+        content: `Thanks! I've scanned your file "${file.name}" with ${columns.length} columns and ${parsedData.length - (hasHeader ? 1 : 0)} rows detected. Let's map it to your configured captions.`,
         timestamp: new Date(),
         suggestions
       };
-      
+
       setChatMessages([welcomeMessage]);
       
       // Add mapping analysis message
@@ -248,24 +290,45 @@ export default function DataImportMap() {
   }, [parseCSV, analyzeCSVData, generateAIMapping, hasHeader]);
 
   const generateMappingAnalysis = (suggestions: MappingSuggestion[], columns: CSVColumn[]): string => {
+    const configuredCaptions = mappingRows.filter(row => row.caption).length;
     const mapped = suggestions.length;
-    const total = columns.length;
-    const highConfidence = suggestions.filter(s => s.confidence > 0.8).length;
-    
-    let message = `I've analyzed your data and found ${mapped} out of ${total} columns that I can map with confidence:\n\n`;
-    
-    suggestions.forEach(suggestion => {
-      const confidence = Math.round(suggestion.confidence * 100);
-      const icon = confidence > 80 ? '✅' : confidence > 60 ? '⚠️' : '❓';
-      message += `${icon} ${columns[suggestion.columnIndex].name} → ${suggestion.caption} (${confidence}% confidence)\n`;
-    });
-    
-    if (mapped < total) {
-      message += `\n${total - mapped} columns still need mapping. Would you like me to take a guess, or would you like to choose?`;
-    } else {
-      message += `\nLooks good! You can review the mappings above and let me know if you'd like to make any changes.`;
+    const unmappedCaptions = mappingRows.filter(row => row.caption && !suggestions.find(s => s.caption === row.caption));
+    const unmappedColumns = columns.filter((_, index) => !suggestions.find(s => s.columnIndex === index));
+
+    let message = `I've analyzed your CSV against your ${configuredCaptions} configured captions. Here's what I found:\n\n`;
+
+    if (mapped > 0) {
+      message += `✅ **Mapped (${mapped}):**\n`;
+      suggestions.forEach(suggestion => {
+        const confidence = Math.round(suggestion.confidence * 100);
+        const icon = confidence > 80 ? '🎯' : confidence > 60 ? '⚠️' : '❓';
+        message += `${icon} ${columns[suggestion.columnIndex].name} → ${suggestion.caption} (${confidence}%)\n`;
+      });
+      message += '\n';
     }
-    
+
+    if (unmappedCaptions.length > 0) {
+      message += `❌ **Unmapped Captions (${unmappedCaptions.length}):**\n`;
+      unmappedCaptions.forEach(row => {
+        message += `• ${row.caption}\n`;
+      });
+      message += '\n';
+    }
+
+    if (unmappedColumns.length > 0) {
+      message += `📋 **Unmapped CSV Columns (${unmappedColumns.length}):**\n`;
+      unmappedColumns.forEach(column => {
+        message += `• ${column.name}\n`;
+      });
+      message += '\n';
+    }
+
+    if (unmappedCaptions.length > 0 || unmappedColumns.length > 0) {
+      message += `Would you like me to help map the remaining items? I can suggest matches or you can tell me how to map them.`;
+    } else {
+      message += `Perfect! All your captions are mapped. You can review the mappings above.`;
+    }
+
     return message;
   };
 
@@ -662,8 +725,8 @@ export default function DataImportMap() {
                 </span>
               </div>
 
-              {/* Data Table - Only show if file is uploaded */}
-              {isFileUploaded && mappingRows.length > 0 && (
+              {/* Data Table - Always show */}
+              {
                 <div className="border border-gray-300 rounded overflow-hidden mb-6">
                   <table className="w-full">
                     <thead>
@@ -741,15 +804,13 @@ export default function DataImportMap() {
                     </tbody>
                   </table>
                 </div>
-              )}
+              }
 
-              {/* Add Button - Only show if file is uploaded */}
-              {isFileUploaded && (
-                <Button className="mb-6 bg-blue-600 hover:bg-blue-700" onClick={addMappingRow}>
-                  <span className="text-xl mr-2">+</span>
-                  Add
-                </Button>
-              )}
+              {/* Add Button - Always show */}
+              <Button className="mb-6 bg-blue-600 hover:bg-blue-700" onClick={addMappingRow}>
+                <span className="text-xl mr-2">+</span>
+                Add
+              </Button>
 
               <div className="w-full h-px bg-gray-300 mb-6"></div>
 
@@ -771,9 +832,9 @@ export default function DataImportMap() {
                     </div>
 
                     <div className="text-center space-y-3">
-                      <h4 className="font-bold text-gray-800">Upload Your Data</h4>
+                      <h4 className="font-bold text-gray-800">Upload Your CSV Data</h4>
                       <p className="text-sm text-gray-600 max-w-[296px]">
-                        Click below to select a .csv file to upload. We'll analyse the data, structure and mapping options and help you to configure the data correctly
+                        Upload your CSV file and I'll help map the columns to your configured captions above. The AI assistant will suggest the best matches.
                       </p>
                     </div>
 
