@@ -75,7 +75,7 @@ export function TableCaptions({ captions, onCaptionsChange }: TableCaptionsProps
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Add new caption */}
-        <div className="flex space-x-2">
+        <div className="flex items-center gap-2">
           <Input
             placeholder="Enter a new caption..."
             value={newCaption}
@@ -84,7 +84,7 @@ export function TableCaptions({ captions, onCaptionsChange }: TableCaptionsProps
             className="flex-1"
           />
           <Button onClick={addCaption} disabled={!newCaption.trim()}>
-            <Plus className="mr-1 h-4 w-4" />
+            <Plus className="h-4 w-4" />
             Add
           </Button>
         </div>
